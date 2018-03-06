@@ -46,7 +46,7 @@ public:
     ros::Publisher  pub_initialPose_;
     ros::Publisher  pub_cancelGoal_;
 
-
+    std::string workdir;
     static nav_msgs::OccupancyGrid map_base_;
     static STATUS_PACKAGE_ACK robot_status;
 };

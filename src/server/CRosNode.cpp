@@ -56,6 +56,7 @@ void CRosNode::Run()
             printf("Cancel Move.\n");
         }
         ros::spinOnce();
+        usleep(50000);
     }
     printf("CRosNode exit.\n");
     systerm_exit = true;

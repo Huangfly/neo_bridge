@@ -2,14 +2,24 @@
 // Created by huang on 17-12-26.
 //
 #include <neo_bridge/CRosNodeManager.h>
-#include "CRosNodeManager.h"
+#include <neo_bridge/RosRobotCtl.h>
+#include <neo_bridge/RosLidarCtl.h>
+#include <neo_bridge/RosSlamCtl.h>
+#include <neo_bridge/RosNavigationCtl.h>
+#include <neo_bridge/CCommandExecutor.h>
 #include "CMappingNode.h"
 
 #define WORKSPACE_BASH_DIR "/home/huang/stage_ws"
+#define
 
 static bool isActionNode = false;
 vector<NODE_INFO> CRosNodeManager::ctlNodeList = vector<NODE_INFO>();
 CMappingNode *mappingNode;
+RosRobotCtl *rosRobotCtl = NULL;
+RosLidarCtl *rosLidarCtl = NULL;
+RosSlamCtl  *rosSlamCtl = NULL;
+RosNavigationCtl *rosNavigationCtl = NULL;
+CommandExecutor *rosNodeList[4];
 
 std::vector<std::string> split(std::string str,std::string pattern)
 {
@@ -58,7 +68,11 @@ CRosNodeManager::CRosNodeManager()
     node.node_name = "/amcl";
     ctlNodeList.push_back(node);
 
-
+    rosRobotCtl = new RosRobotCtl();
+    rosLidarCtl = new RosLidarCtl();
+    rosSlamCtl  = new RosSlamCtl();
+    rosNavigationCtl = new RosNavigationCtl();
+    //rosRobotCtl->ReturnValue();
 }
 
 void CRosNodeManager::setStatus(NODE_INFO *info, char status)
@@ -74,7 +88,7 @@ void CRosNodeManager::Run()
     {
         getNodeList();
 
-        for (int i = 0; i < ctlNodeList.size(); ++i) {
+        /*for (int i = 0; i < ctlNodeList.size(); ++i) {
             if( ctlNodeList[i].enable == 1 && false == macthNode(nodeList,ctlNodeList[i].node_name) )
             {
                 if(ctlNodeList[i].status == NODE_CLOCE)
@@ -95,7 +109,7 @@ void CRosNodeManager::Run()
                     setStatus(&ctlNodeList[i],NODE_CLOCE);
                 }
             }
-        }
+        }*/
         char count = 0;
         while(count<=10)
         {
@@ -107,12 +121,15 @@ void CRosNodeManager::Run()
     }
 }
 
-void CRosNodeManager::getNodeList()
+vector<string>  CRosNodeManager::getNodeList()
 {
     string str = "";
     FILE* fp = popen("rosnode list","r");
     char ch;
-    if(fp == NULL)return;
+    if(fp == NULL){
+        nodeList.clear();
+        return nodeList;
+    }
 
     while( (ch = fgetc(fp)) > 0)
     {
@@ -125,59 +142,35 @@ void CRosNodeManager::getNodeList()
 
     nodeList = split(str,"\n");
     for (int i = 0; i < nodeList.size(); ++i) printf("----%s\n",nodeList[i].c_str());
-
+    return nodeList;
 }
 
-void CRosNodeManager::runNode(NODE_INFO node)
+bool CRosNodeManager::funcCtlNode(std::string node_str,bool enable)
 {
-    char buffer[50] = {0};
-    sprintf(buffer,"bash %s%s.sh",WORKSPACE_BASH_DIR,node.node_bashname.c_str());
-
-    printf("--\n%s\n",buffer);
-    popen(buffer,"r");
-    while(1) {
-        getNodeList();
-        if(macthNode(nodeList, node.node_name) == true)break;
-        sleep(1);
-    }
-    printf("--\n%s\nfail.\n",buffer);
-}
-
-bool CRosNodeManager::killNode(NODE_INFO node)
-{
-    char buffer[50] = {0};
-ROSNODEMANAGER_KILL_NODE:
-    sprintf(buffer,"bash %s%s_kill.sh",WORKSPACE_BASH_DIR,node.node_bashname.c_str());
-    printf("--\n%s\n",buffer);
-    popen(buffer,"r");
-
-    int count = 0;
-    while(1) {
-        getNodeList();
-        if(macthNode(nodeList, node.node_name) == false)break;
-        sleep(1);
-        count++;
-        if(count>5)
-        {
-            runNode(node);
-            goto ROSNODEMANAGER_KILL_NODE;
+    if( enable ){
+        if (node_str == "robot") {
+            return rosRobotCtl->Done();
+        }else if(node_str == "lidar"){
+            return rosLidarCtl->Done();
+        }else if(node_str == "slam"){
+            return rosSlamCtl->Done();
+        }else if(node_str == "navigation"){
+            return rosNavigationCtl->Done();
+        }else{
+            return false;
         }
-    }
-    printf("--\n%s \nfail.\n",buffer);
-    return true;
-}
-
-bool CRosNodeManager::funcCtlNode(std::string node_str,char enable)
-{
-
-    for (int i = 0; i < ctlNodeList.size(); ++i) {
-       if(ctlNodeList[i].node_bashname == node_str && ctlNodeList[i].enable != enable)
-       {
-           ctlNodeList[i].enable = enable;
-           isActionNode = true;
-           printf("%s.  %d\n",node_str.c_str(), ctlNodeList[i].status);
-           return true;
-       }
+    }else {
+        if (node_str == "robot") {
+            return rosRobotCtl->Kill();
+        }else if(node_str == "lidar"){
+            return rosLidarCtl->Kill();
+        }else if(node_str == "slam"){
+            return rosSlamCtl->Kill();
+        }else if(node_str == "navigation"){
+            return rosNavigationCtl->Kill();
+        }else{
+            return false;
+        }
     }
     //printf("%s fail.\n",node_str.c_str());
     return false;

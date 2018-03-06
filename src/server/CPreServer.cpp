@@ -277,8 +277,8 @@ void CPreServer::Exec(int argc,char **argv)
 	CClientEpollThread client_thread(&client_epoll);
 	client_thread.Create();
 	//
-	CPrintThread printf_thread(&client_epoll);
-	printf_thread.Create();
+	//CPrintThread printf_thread(&client_epoll);
+	//printf_thread.Create();
 	//
 	CRcvAckThread rcvAck_Thread;
 	rcvAck_Thread.Create();
@@ -289,7 +289,7 @@ void CPreServer::Exec(int argc,char **argv)
 #ifdef USE_ROS
     while(systerm_exit == false)
     {
-        server_epoll.Wait(10);
+        server_epoll.Wait(50);
         //printf("CPreServer %d\n",systerm_exit);
         //ros::spinOnce();
     }

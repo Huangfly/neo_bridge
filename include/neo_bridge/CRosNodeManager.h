@@ -12,6 +12,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <neo_bridge/RosRobotCtl.h>
 
 #define NODE_CLOCE      0
 #define NODE_CLOCEING   1
@@ -32,12 +33,10 @@ public:
     CRosNodeManager();
     //~CRosNodeManager();
     void Run();
-    void getNodeList();
-    void runNode(NODE_INFO node);
-    bool killNode(NODE_INFO node);
+    vector<string>  getNodeList();
     void setStatus(NODE_INFO *info, char status);
 
-    static bool funcCtlNode(std::string node_str,char enable);
+    static bool funcCtlNode(std::string node_str,bool enable);
 
 
     vector<string> nodeList;

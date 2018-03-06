@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <string.h>
+#include <string>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>  /* netdb is necessary for struct hostent */
+#include <cerrno>
+#include <fcntl.h>
 
 
 #define PORT 8888  /* server port */
@@ -39,10 +41,139 @@ typedef struct {
     char data[512];
 }MAP_PACKAGE_ACK;
 
-int main(int argc, char *argv[])
-{
+static pid_t    *childpid = NULL;
+/* ptr to array allocated at run-time */
+static int      maxfd;  /* from our open_max(), {Prog openmax} */
 
-    popen("bash /home/huang/stage_ws/slam.sh","w");
+#define SHELL   "/bin/sh"
+
+int killProcess(pid_t pid)
+{
+    char popbuffer[20] = {0};
+    if(pid < 500)
+        return false;
+    sprintf(popbuffer,"kill %d",pid);
+    return system(popbuffer);
+}
+
+FILE *
+mypopen(const char *cmdstring, const char *type, pid_t &cmd_pid)
+{
+    int     i, pfd[2];
+    pid_t   pid;
+    FILE    *fp;
+
+    /* only allow "r" or "w" */
+    if ((type[0] != 'r' && type[0] != 'w') || type[1] != 0) {
+        errno = EINVAL;     /* required by POSIX.2 */
+        return(NULL);
+    }
+
+    if (childpid == NULL) {     /* first time through */
+        /* allocate zeroed out array for child pids */
+        maxfd = 10;
+        if ( (childpid = (pid_t *)calloc(maxfd, sizeof(pid_t))) == NULL)
+            return(NULL);
+    }
+
+    if (pipe(pfd) < 0)
+        return(NULL);   /* errno set by pipe() */
+
+    if ( (pid = fork()) < 0)
+        return(NULL);   /* errno set by fork() */
+    else if (pid == 0) {                            /* child */
+        if (*type == 'r') {
+            close(pfd[0]);
+            if (pfd[1] != STDOUT_FILENO) {
+                dup2(pfd[1], STDOUT_FILENO);
+                close(pfd[1]);
+            }
+        } else {
+            close(pfd[1]);
+            if (pfd[0] != STDIN_FILENO) {
+                dup2(pfd[0], STDIN_FILENO);
+                close(pfd[0]);
+            }
+        }
+        /* close all descriptors in childpid[] */
+        for (i = 0; i < maxfd; i++)
+            if (childpid[ i ] > 0)
+                close(i);
+
+        execl(SHELL, "sh", "-c", cmdstring, (char *) 0);
+        _exit(127);
+    }
+
+    cmd_pid = pid;
+    /* parent */
+    if (*type == 'r') {
+        close(pfd[1]);
+        if ( (fp = fdopen(pfd[0], type)) == NULL)
+            return(NULL);
+    } else {
+        close(pfd[0]);
+        if ( (fp = fdopen(pfd[1], type)) == NULL)
+            return(NULL);
+    }
+    childpid[fileno(fp)] = pid; /* remember child pid for this fd */
+    return(fp);
+}
+
+
+
+int CmdProcessOpen(const char *cmdstring, const char *outfilename)
+{
+    int     i, pfd;
+    pid_t   pid;
+    char new_cmd[256] = {0};
+
+    if(cmdstring == NULL)return -1;
+
+    if( outfilename == NULL )
+    {
+        return -1;
+    }
+
+    sprintf(new_cmd,"%s > %s",cmdstring,outfilename);
+    printf("%s\n",new_cmd);
+    if ( (pid = fork()) < 0)
+        return -1;   /* errno set by fork() */
+    else if (pid == 0) {                            /* child */
+        execl(SHELL, "sh", "-c", new_cmd, (char *) 0);
+        _exit(127);
+    }
+
+
+
+    return pid;
+}
+
+int main(int argc, char *argv[]) {
+    std::string str;
+    str = "";
+    pid_t cmd_pid;
+    char buffer[256] = {0};
+    //FILE *fp = mypopen("rostopic hz /odom", "r", cmd_pid);
+    cmd_pid = CmdProcessOpen("rostopic hz /odom", "./lll.log");
+    char ch;
+    FILE *fp = fopen("./lll.log","r");
+    //if (fp == NULL)return 0;
+    printf("pid = %d\n", cmd_pid);
+
+    fgets(buffer, 10, fp);
+/*
+    while( (ch = fgetc(fp)) > 0 )
+    {
+        if(ch <= 0)break;
+
+        str.push_back(ch);
+    }*/
+    //printf("aa-----------------\n");
+    printf("--------------\n%s\n", buffer);
+    //killProcess(cmd_pid);
+    //pclose(fp);
+    while(1);
+    /*popen("bash /home/huang/stage_ws/slam.sh","w");
     while(1)
     {
         char ch = getchar();
@@ -52,7 +183,7 @@ int main(int argc, char *argv[])
             printf("end----------------------\n");
             break;
         }
-    }
+    }*/
 
 /*    int sockfd, num;
     char buf[MAXDATASIZE];
