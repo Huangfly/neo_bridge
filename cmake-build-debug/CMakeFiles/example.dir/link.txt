@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/example.dir/src/client_example.cpp.o  -o devel/lib/neo_bridge/example 

@@ -18,7 +18,7 @@ RosNavigationCtl::~RosNavigationCtl() {
 
 bool RosNavigationCtl::Done() {
     if(isRun)return true;
-    //CmdProcessOpen("roslaunch ","cartographer.log");
+    this->pid = CmdProcessOpen("roslaunch micvision_mapping mapping_turtlebot2.launch","mapping_turtlebot2.log");
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|run'\" ","r");
     isRun = true;
     return true;
@@ -26,7 +26,7 @@ bool RosNavigationCtl::Done() {
 
 int RosNavigationCtl::ReturnValue() {
     std::string str = "";
-    FILE* fp = popen("rostopic info /move_base","r");
+    FILE* fp = popen("rostopic info /map","r");
     char ch;
     if(fp == NULL)return 0;
 
@@ -36,6 +36,9 @@ int RosNavigationCtl::ReturnValue() {
 
         str.push_back(ch);
     }
+    if (str.find("ERROR") == std::string::npos){
+        return 0;
+    }
     //printf("--------------\n%s\n",str.c_str());
     pclose(fp);
     return 1;
@@ -43,6 +46,7 @@ int RosNavigationCtl::ReturnValue() {
 
 bool RosNavigationCtl::Kill() {
     if(!isRun)return true;
+    killProcess(this->pid);
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|kill'\" ","r");
     isRun = false;
     return true;

@@ -10,7 +10,7 @@
 #include "CMappingNode.h"
 
 #define WORKSPACE_BASH_DIR "/home/huang/stage_ws"
-#define
+//#define
 
 static bool isActionNode = false;
 vector<NODE_INFO> CRosNodeManager::ctlNodeList = vector<NODE_INFO>();
@@ -19,7 +19,7 @@ RosRobotCtl *rosRobotCtl = NULL;
 RosLidarCtl *rosLidarCtl = NULL;
 RosSlamCtl  *rosSlamCtl = NULL;
 RosNavigationCtl *rosNavigationCtl = NULL;
-CommandExecutor *rosNodeList[4];
+CommandExecutor *rosNodeList[5];
 
 std::vector<std::string> split(std::string str,std::string pattern)
 {

@@ -19,6 +19,7 @@ public:
     virtual bool Kill() = 0;
 protected:
     std::string cmd_;
+    pid_t pid;
 };
 
 #endif //NEO_BRIDGE_CCOMMANDEXECUTOR_H

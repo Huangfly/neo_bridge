@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/tyu/QtCode/neo_bridge/cmake-build-debug/devel/setup.sh

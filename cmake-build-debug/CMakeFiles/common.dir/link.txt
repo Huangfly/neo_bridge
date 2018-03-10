@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libcommon.so -o devel/lib/libcommon.so CMakeFiles/common.dir/src/common/CShareMem.cpp.o CMakeFiles/common.dir/src/common/CStreamBase.cpp.o CMakeFiles/common.dir/src/common/CThreadBase.cpp.o CMakeFiles/common.dir/src/common/CThreadPool.cpp.o CMakeFiles/common.dir/src/common/packet.cpp.o -lpthread 
