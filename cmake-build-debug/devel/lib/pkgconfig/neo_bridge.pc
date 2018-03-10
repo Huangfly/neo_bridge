@@ -1,8 +1,0 @@
-prefix=/home/tyu/QtCode/neo_bridge/cmake-build-debug/devel
-
-Name: neo_bridge
-Description: Description of neo_bridge
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/tyu/QtCode/neo_bridge/cmake-build-debug/devel/lib 
-Requires: 
