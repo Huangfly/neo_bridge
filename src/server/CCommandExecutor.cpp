@@ -12,7 +12,7 @@ int killProcess(pid_t pid)
     char popbuffer[20] = {0};
     if(pid < 500)
         return false;
-    sprintf(popbuffer,"kill %d",pid);
+    sprintf(popbuffer,"kill -s SIGINT %s",pid);
     return system(popbuffer);
 }
 
