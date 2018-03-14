@@ -11,6 +11,7 @@
 #include <netdb.h>  /* netdb is necessary for struct hostent */
 #include <cerrno>
 #include <fcntl.h>
+#include <signal.h>
 
 
 #define PORT 8888  /* server port */
@@ -55,7 +56,14 @@ int killProcess(pid_t pid)
     sprintf(popbuffer,"kill %d",pid);
     return system(popbuffer);
 }
+int killProcessRosLaunch(char *cmd_name)
+{
 
+    char popbuffer[120] = {0};
+    sprintf(popbuffer,"kill -2 $(ps -au | grep \"%s\"|grep \"/usr/bin/python\"|awk '{print $2}')",cmd_name);
+    printf("%s\n",popbuffer);
+    return system(popbuffer);
+}
 FILE *
 mypopen(const char *cmdstring, const char *type, pid_t &cmd_pid)
 {
@@ -153,14 +161,13 @@ int main(int argc, char *argv[]) {
     str = "";
     pid_t cmd_pid;
     char buffer[256] = {0};
-    //FILE *fp = mypopen("rostopic hz /odom", "r", cmd_pid);
-    cmd_pid = CmdProcessOpen("rostopic hz /odom", "./lll.log");
+    std::string cmd_name = "rostopic hz /rosout";
+    signal(SIGCHLD, SIG_IGN);
+    //FILE *fp = mypopen("top", "r", cmd_pid);
+    cmd_pid = CmdProcessOpen(cmd_name.c_str(), "./lll.log");
     char ch;
-    FILE *fp = fopen("./lll.log","r");
-    //if (fp == NULL)return 0;
-    printf("pid = %d\n", cmd_pid);
 
-    fgets(buffer, 10, fp);
+
 /*
     while( (ch = fgetc(fp)) > 0 )
     {
@@ -169,9 +176,12 @@ int main(int argc, char *argv[]) {
         str.push_back(ch);
     }*/
     //printf("aa-----------------\n");
-    printf("--------------\n%s\n", buffer);
+    printf("--------------\n%d\n", cmd_pid);
     //killProcess(cmd_pid);
     //pclose(fp);
+    //sleep(3);
+    killProcessRosLaunch((char *) cmd_name.c_str());
+    printf("dsadsa\n");
     while(1);
     /*popen("bash /home/huang/stage_ws/slam.sh","w");
     while(1)

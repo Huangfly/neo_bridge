@@ -10,6 +10,7 @@ class RosNavigationCtl:public CommandExecutor
 {
 private:
     bool isRun;
+
 public:
     RosNavigationCtl();
     ~RosNavigationCtl();

@@ -19,8 +19,8 @@ RosNavigationCtl::~RosNavigationCtl() {
 bool RosNavigationCtl::Done() {
     if(isRun)return true;
     printf("Start Navigation\n");
-    this->pid = CmdProcessOpen("roslaunch micvision_mapping mapping_turtlebot2.launch","mapping_turtlebot2.log");
-    //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|run'\" ","r");
+    //this->pid = CmdProcessOpen("roslaunch micvision_mapping mapping_turtlebot2.launch","mapping_turtlebot2.log");
+    popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|run'\" ","r");
     printf("success %d\n",this->pid);
     isRun = true;
     return true;

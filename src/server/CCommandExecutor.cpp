@@ -6,17 +6,24 @@
 #include <cstdio>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 
 int killProcess(pid_t pid)
 {
     char popbuffer[20] = {0};
     if(pid < 500)
         return false;
-    sprintf(popbuffer,"kill -s SIGINT %s",pid);
+    sprintf(popbuffer,"kill -s SIGINT %d",pid);
     return system(popbuffer);
 }
 
+int killProcessRosLaunch(char *cmd_name)
+{
 
+    char popbuffer[120] = {0};
+    sprintf(popbuffer,"kill -2 $(ps -au | grep \"%s\"|grep \"/usr/bin/python\"|awk '{print $2}')",cmd_name);
+    return system(popbuffer);
+}
 
 int CmdProcessOpen(const char *cmdstring, const char *outfilename)
 {
@@ -30,7 +37,7 @@ int CmdProcessOpen(const char *cmdstring, const char *outfilename)
     {
         return -1;
     }
-
+    signal(SIGCHLD, SIG_IGN);
     sprintf(new_cmd,"%s > %s",cmdstring,outfilename);
     printf("%s\n",new_cmd);
     if ( (pid = fork()) < 0)
