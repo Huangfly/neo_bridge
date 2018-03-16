@@ -9,7 +9,7 @@
 
 int killProcess(pid_t pid);
 int CmdProcessOpen(const char *cmdstring, const char *outfilename);
-
+int killProcessRosLaunch(char *cmd_name);
 class CommandExecutor {
 public:
     CommandExecutor(const std::string& cmd);

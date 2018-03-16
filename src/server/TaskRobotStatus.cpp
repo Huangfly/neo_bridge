@@ -28,7 +28,7 @@ void CRobotStatusTask::doAction() {
 
     packet.Packet((unsigned char *)ack_buf, &Size, PACK_HEARD, &CRosNode::robot_status, sizeof(STATUS_PACKAGE_ACK), head.trans_id, head.msg_code);
     //DEBUG_LOG((unsigned char*)ack_buf,Size);
-    //printf("recv %d\n",CRosNode::robot_status.updateMap);
+    //printf("recv %d  %d\n",CRosNode::robot_status.updateMap,sizeof(STATUS_PACKAGE_ACK));
     shm_ack.Write((char*)ack_buf, Size, fd);
 }
 

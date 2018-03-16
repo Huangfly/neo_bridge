@@ -7,6 +7,7 @@
 #include "CRosNode.h"
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
+
 extern bool systerm_exit;
 extern CShareMem shm_bus;
 static geometry_msgs::PoseStamped st_MoveGoal;
@@ -21,11 +22,12 @@ CRosNode::CRosNode()
         ,nhp("~")
 {
     sub_map_ = nh.subscribe("/map",0.01,&CRosNode::cbMap, this);
-    sub_odom_ = nh.subscribe("/odom",5,&CRosNode::cbOdom, this);
+    //sub_odom_ = nh.subscribe("/odom",5,&CRosNode::cbOdom, this);
     sub_moveStatus_ = nh.subscribe("/move_base/status",5,&CRosNode::cbMoveStatus, this);
     pub_goal_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
     pub_cancelGoal_ = nh.advertise<actionlib_msgs::GoalID>("/move_base/cancel",1);
 
+    tf_listener = new tf::TransformListener(nh);
     //m_pub_flag = {0};
     st_pub_flag.isPub_Goal = false;
     st_pub_flag.isPub_InitPose = false;
@@ -34,8 +36,11 @@ CRosNode::CRosNode()
 
 void CRosNode::Run()
 {
+    //tf::TransformListener tf_listener;
+
     while (ros::ok())
     {
+        tf::StampedTransform transform_map_odom;
         if(systerm_exit)break;
         if(st_pub_flag.isPub_Goal) {
             st_pub_flag.isPub_Goal = false;
@@ -55,8 +60,27 @@ void CRosNode::Run()
             pub_cancelGoal_.publish(st_CancelGoal);
             printf("Cancel Move.\n");
         }
+        try {
+            tf_listener->lookupTransform("map","base_link",ros::Time(0.),transform_map_odom);
+            robot_status.x = transform_map_odom.getOrigin().getX();
+            robot_status.y = transform_map_odom.getOrigin().getY();
+            robot_status.z = transform_map_odom.getOrigin().getZ();
+            robot_status.Quaternion[0] = transform_map_odom.getRotation().getX();
+            robot_status.Quaternion[1] = transform_map_odom.getRotation().getY();
+            robot_status.Quaternion[2] = transform_map_odom.getRotation().getZ();
+            robot_status.Quaternion[3] = transform_map_odom.getRotation().getW();
+            //printf("x:%f\ny:%f\n",robot_status.x,robot_status.y);
+            //printf("x:%f\ny:%f\nz:%f\nw:%f\n",robot_status.Quaternion[0] ,robot_status.Quaternion[1] ,robot_status.Quaternion[2] ,robot_status.Quaternion[3]);
+            //tf_listener.waitForTransform("map","odom",ros::Time(0.1));
+        }catch (tf::TransformException &ex){
+            //ROS_ERROR("%s",ex.what());
+            //ros::spinOnce();
+            //usleep(10000);
+            //continue;
+        }
+
         ros::spinOnce();
-        usleep(50000);
+        usleep(10000);
     }
     printf("CRosNode exit.\n");
     systerm_exit = true;
@@ -83,8 +107,13 @@ void CRosNode::PopCancelGoal()
 
 void CRosNode::cbMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 {
-    //if(this->map_base_.data.size() != msg->data.size())
+    static ros::Time pre_time = ros::Time::now();
+    ros::Time cur_time = ros::Time::now();
+
+    if( (cur_time.toNSec() - pre_time.toNSec()) > 500000000 )
     {
+        //printf("time %ld %ld\n",cur_time.toNSec(),pre_time.toNSec());
+        pre_time = cur_time;
         this->map_base_ = *msg;
         robot_status.updateMap = 1;
     }
@@ -92,13 +121,13 @@ void CRosNode::cbMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 }
 
 void CRosNode::cbOdom(const nav_msgs::Odometry &msg) {
-    robot_status.x = msg.pose.pose.position.x;
+    /*robot_status.x = msg.pose.pose.position.x;
     robot_status.y = msg.pose.pose.position.y;
     robot_status.z = msg.pose.pose.position.z;
     robot_status.Quaternion[0] = msg.pose.pose.orientation.x;
     robot_status.Quaternion[1] = msg.pose.pose.orientation.y;
     robot_status.Quaternion[2] = msg.pose.pose.orientation.z;
-    robot_status.Quaternion[3] = msg.pose.pose.orientation.w;
+    robot_status.Quaternion[3] = msg.pose.pose.orientation.w;*/
     //printf("recv odom %d\n",robot_status.updateMap);
 }
 

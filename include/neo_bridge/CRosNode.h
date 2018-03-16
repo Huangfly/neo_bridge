@@ -17,6 +17,8 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <actionlib_msgs/GoalStatusArray.h>
+#include <tf/tf.h>
+#include <tf/transform_listener.h>
 
 typedef struct {
     bool isPub_Goal;
@@ -45,6 +47,8 @@ public:
     ros::Publisher  pub_goal_;
     ros::Publisher  pub_initialPose_;
     ros::Publisher  pub_cancelGoal_;
+
+    tf::TransformListener *tf_listener;
 
     std::string workdir;
     static nav_msgs::OccupancyGrid map_base_;

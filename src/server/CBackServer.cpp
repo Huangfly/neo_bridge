@@ -26,7 +26,7 @@ void CBackServer::Exec(int argc,char **argv)
     rosnode.Create();
     while(systerm_exit == false)
 	{
-        usleep(50000);
+        //usleep(50000);
 		shm_bus.Read(bus_pack, &Len, &fd, NULL);
 
         if (Len > 1)//

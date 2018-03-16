@@ -41,6 +41,7 @@ typedef struct {
     float Quaternion[4];
     char updateMap;
     char movebase_status;
+    char ref[2];
 }STATUS_PACKAGE_ACK;
 
 class CRobotStatusTask:public CTask

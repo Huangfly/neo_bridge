@@ -8,7 +8,7 @@
 #include <neo_bridge/RosNavigationCtl.h>
 #include <neo_bridge/CCommandExecutor.h>
 #include "CMappingNode.h"
-
+#include <neo_bridge/RosExploreCtl.h>
 #define WORKSPACE_BASH_DIR "/home/huang/stage_ws"
 //#define
 
@@ -19,6 +19,7 @@ RosRobotCtl *rosRobotCtl = NULL;
 RosLidarCtl *rosLidarCtl = NULL;
 RosSlamCtl  *rosSlamCtl = NULL;
 RosNavigationCtl *rosNavigationCtl = NULL;
+RosExploreCtl *rosExploreCtl = NULL;
 CommandExecutor *rosNodeList[5];
 
 std::vector<std::string> split(std::string str,std::string pattern)
@@ -72,6 +73,7 @@ CRosNodeManager::CRosNodeManager()
     rosLidarCtl = new RosLidarCtl();
     rosSlamCtl  = new RosSlamCtl();
     rosNavigationCtl = new RosNavigationCtl();
+    rosExploreCtl = new RosExploreCtl();
     //rosRobotCtl->ReturnValue();
 }
 
@@ -86,7 +88,7 @@ void CRosNodeManager::Run()
 
     while(1)
     {
-        getNodeList();
+        //getNodeList();
 
         /*for (int i = 0; i < ctlNodeList.size(); ++i) {
             if( ctlNodeList[i].enable == 1 && false == macthNode(nodeList,ctlNodeList[i].node_name) )
@@ -156,6 +158,8 @@ bool CRosNodeManager::funcCtlNode(std::string node_str,bool enable)
             return rosSlamCtl->Done();
         }else if(node_str == "navigation"){
             return rosNavigationCtl->Done();
+        }else if(node_str == "explore"){
+            return rosExploreCtl->Done();
         }else{
             return false;
         }
@@ -168,6 +172,8 @@ bool CRosNodeManager::funcCtlNode(std::string node_str,bool enable)
             return rosSlamCtl->Kill();
         }else if(node_str == "navigation"){
             return rosNavigationCtl->Kill();
+        }else if(node_str == "explore"){
+            return rosExploreCtl->Kill();
         }else{
             return false;
         }

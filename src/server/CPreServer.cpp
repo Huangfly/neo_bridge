@@ -21,7 +21,7 @@
 #include <netdb.h>
 
 
-#define NO_SCREEN
+//#define NO_SCREEN
 
 extern bool systerm_exit;
 
@@ -63,7 +63,7 @@ void CPrintThread::Run()
 	while (1)
 	{
 #ifndef NO_SCREEN 
-		sleep(2);
+		sleep(1);
 		printf("=============================================================================\n");
 		printf("connect: %d\n", connect_Count);
 		printf("package: RX-%d  TX-%d\n", rcv_Count, ack_Count);
@@ -143,6 +143,7 @@ void CSendPackTask::doAction()
 	int ctl = 0;
 	write_ack.setFd(fd);
 	ctl = write_ack.Write(buf, Len);
+	//printf("write succese fd = %d",fd);
 	ack_Count++;
 /*	if(ctl > 0)
 	{
@@ -204,7 +205,7 @@ void CRcvAckThread::Run()
 		shm_ack.Read(ack_buf, &Len, &fd, &head);
 		if (Len > 10)
 		{
-            //printf("ack pack num:%d\n",ack_buf[1]);
+            //printf("ack pack len = %d ; num:%d\n",Len,ack_buf[1]);
 			this->sendack_poll->addTask(new CSendPackTask(ack_buf, Len, fd, &head));
 			Len = 0;
 		}
@@ -277,8 +278,8 @@ void CPreServer::Exec(int argc,char **argv)
 	CClientEpollThread client_thread(&client_epoll);
 	client_thread.Create();
 	//
-	//CPrintThread printf_thread(&client_epoll);
-	//printf_thread.Create();
+	CPrintThread printf_thread(&client_epoll);
+	printf_thread.Create();
 	//
 	CRcvAckThread rcvAck_Thread;
 	rcvAck_Thread.Create();

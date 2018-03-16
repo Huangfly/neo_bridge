@@ -135,9 +135,10 @@ int CStreamBase::Write(const char *buf, const int buf_len)
 {
 	int nCount;
 	nCount = write(m_fd, buf, buf_len);
+
 	if (nCount == -1)
 	{
-//		perror("write fail.");
+		perror("write fail.");
 	}
 	
 	return nCount;
