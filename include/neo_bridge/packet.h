@@ -23,6 +23,7 @@
 #define PACK_NODECTL	5 //
 #define PACK_NAVIGATION	6 //
 #define PACK_LOCATION	7 //
+#define PACK_CMDVEL     8 //
 
 //
 typedef struct packet_head 

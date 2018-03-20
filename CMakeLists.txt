@@ -48,7 +48,7 @@ target_link_libraries(tcpip common)
 #=================================================
 #    executable
 #=================================================
-add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosSlamCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosSlamCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h)
+add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosSlamCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosSlamCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/Type_CmdVel.h include/neo_bridge/TaskCmdVel.h)
 target_link_libraries(${PROJECT_NAME}_node
         ${catkin_LIBRARIES}
         common

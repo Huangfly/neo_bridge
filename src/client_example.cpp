@@ -142,7 +142,7 @@ int CmdProcessOpen(const char *cmdstring, const char *outfilename)
         return -1;
     }
 
-    sprintf(new_cmd,"%s > %s",cmdstring,outfilename);
+    sprintf(new_cmd,"%s 2 >& 1 %s",cmdstring,outfilename);
     printf("%s\n",new_cmd);
     if ( (pid = fork()) < 0)
         return -1;   /* errno set by fork() */

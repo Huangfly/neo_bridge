@@ -6,6 +6,7 @@
 #include "goal.h"
 #include "TaskCancelGoal.h"
 #include "TaskNodeCtl.h"
+#include <neo_bridge/TaskCmdVel.h>
 
 CUnpackTask::CUnpackTask(char *bus_buf, int Len, int fd, CThreadPool *busctl_pool)
 :CTask()
@@ -46,6 +47,9 @@ void CUnpackTask::  doAction()
         case PACK_NODECTL:
             busctl_pool->addTask( new CNodeCtlTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(NODECTL_PACKAGE_POP)) );
             break;
+		case PACK_CMDVEL:
+			busctl_pool->addTask( new CCmdVelTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(CMDVEL_PACKAGE_POP)));
+			break;
 	default:
 		break;
 	}

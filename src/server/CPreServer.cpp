@@ -21,7 +21,7 @@
 #include <netdb.h>
 
 
-//#define NO_SCREEN
+#define NO_SCREEN
 
 extern bool systerm_exit;
 

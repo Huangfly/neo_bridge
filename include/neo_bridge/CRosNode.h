@@ -34,6 +34,7 @@ public:
 
     static void PopMoveGoal(geometry_msgs::PoseStamped goal);
     static void PopInitialPose(geometry_msgs::PoseStamped pose);
+    static void PopCmdVel(float x,float y,float z);
     static void PopCancelGoal();
     void cbMap(const nav_msgs::OccupancyGrid::ConstPtr &msg);
     void cbOdom(const nav_msgs::Odometry &msg);

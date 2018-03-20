@@ -17,6 +17,9 @@ static ROS_PUB_FLAG st_pub_flag;
 nav_msgs::OccupancyGrid CRosNode::map_base_ = nav_msgs::OccupancyGrid();
 STATUS_PACKAGE_ACK CRosNode::robot_status = {0};
 
+
+ros::Publisher  pub_cmdVel_;
+
 CRosNode::CRosNode()
         :nh("~")
         ,nhp("~")
@@ -26,6 +29,7 @@ CRosNode::CRosNode()
     sub_moveStatus_ = nh.subscribe("/move_base/status",5,&CRosNode::cbMoveStatus, this);
     pub_goal_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
     pub_cancelGoal_ = nh.advertise<actionlib_msgs::GoalID>("/move_base/cancel",1);
+    pub_cmdVel_ = nh.advertise<geometry_msgs::Twist>("/cmd_vel",10);
 
     tf_listener = new tf::TransformListener(nh);
     //m_pub_flag = {0};
@@ -98,6 +102,15 @@ void CRosNode::PopInitialPose(geometry_msgs::PoseStamped pose)
 {
     st_InitPose = pose;
     st_pub_flag.isPub_InitPose = true;
+}
+
+void CRosNode::PopCmdVel(float x,float y,float z)
+{
+    geometry_msgs::Twist cmd_vel;
+    cmd_vel.linear.x = x;
+    cmd_vel.linear.y = y;
+    cmd_vel.angular.z = z;
+    pub_cmdVel_.publish(cmd_vel);
 }
 
 void CRosNode::PopCancelGoal()
