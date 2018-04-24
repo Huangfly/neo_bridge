@@ -8,7 +8,7 @@ CThreadBase::CThreadBase()
 
 CThreadBase::~CThreadBase()
 {
-	
+	this->Cancel();
 }
 
 bool CThreadBase::Create()

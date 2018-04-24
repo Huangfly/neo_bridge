@@ -24,10 +24,11 @@ private:
 class CRcvAckThread:public CThreadBase
 {
 public:
-	CRcvAckThread();
+	CRcvAckThread(CClientEpoll *client_epoll);
 	void Run();
 private:
 	CThreadPool *sendack_poll;
+	CClientEpoll *client_epoll;
 };
 
 
@@ -43,7 +44,7 @@ private:
 class CSendPackTask:public CTask
 {
 public:
-	CSendPackTask(char *buf, int Len, int fd, P_HEAD *ack_head);
+	CSendPackTask(char *buf, int Len, int fd, P_HEAD *ack_head,CClientEpoll *client_epoll);
 	~CSendPackTask();
 	void doAction();
 private:
@@ -51,6 +52,7 @@ private:
 	int Len;
 	int fd;
 	P_HEAD ack_head;
+	CClientEpoll *client_epoll;
 };
 
 class CPreServer
@@ -59,8 +61,9 @@ public:
 	CPreServer();
 	~CPreServer();
         void Exec(int argc,char **argv);
+	void Restart();
 private:
-
+	bool isRestart;
 };
 
 #endif

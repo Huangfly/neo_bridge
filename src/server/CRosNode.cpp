@@ -15,8 +15,9 @@ static geometry_msgs::PoseStamped st_InitPose;
 static actionlib_msgs::GoalID st_CancelGoal;
 static ROS_PUB_FLAG st_pub_flag;
 nav_msgs::OccupancyGrid CRosNode::map_base_ = nav_msgs::OccupancyGrid();
+sensor_msgs::LaserScan CRosNode::scan_ = sensor_msgs::LaserScan();
 STATUS_PACKAGE_ACK CRosNode::robot_status = {0};
-
+STATUS_PACKAGE_ACK CRosNode::laser_pose = {0};
 
 ros::Publisher  pub_cmdVel_;
 
@@ -25,6 +26,7 @@ CRosNode::CRosNode()
         ,nhp("~")
 {
     sub_map_ = nh.subscribe("/map",0.01,&CRosNode::cbMap, this);
+    sub_scan_ = nh.subscribe("/scan",10,&CRosNode::cbScan,this);
     //sub_odom_ = nh.subscribe("/odom",5,&CRosNode::cbOdom, this);
     sub_moveStatus_ = nh.subscribe("/move_base/status",5,&CRosNode::cbMoveStatus, this);
     pub_goal_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
@@ -42,9 +44,12 @@ void CRosNode::Run()
 {
     //tf::TransformListener tf_listener;
 
+
+
     while (ros::ok())
     {
         tf::StampedTransform transform_map_odom;
+        tf::StampedTransform transform_map_laser;
         if(systerm_exit)break;
         if(st_pub_flag.isPub_Goal) {
             st_pub_flag.isPub_Goal = false;
@@ -73,6 +78,15 @@ void CRosNode::Run()
             robot_status.Quaternion[1] = transform_map_odom.getRotation().getY();
             robot_status.Quaternion[2] = transform_map_odom.getRotation().getZ();
             robot_status.Quaternion[3] = transform_map_odom.getRotation().getW();
+            tf_listener->lookupTransform("map","base_laser_link",ros::Time(0.),transform_map_laser);
+            laser_pose.x = transform_map_laser.getOrigin().getX();
+            laser_pose.y = transform_map_laser.getOrigin().getY();
+            laser_pose.z = transform_map_laser.getOrigin().getZ();
+            laser_pose.Quaternion[0] = transform_map_laser.getRotation().getX();
+            laser_pose.Quaternion[1] = transform_map_laser.getRotation().getY();
+            laser_pose.Quaternion[2] = transform_map_laser.getRotation().getZ();
+            laser_pose.Quaternion[3] = transform_map_laser.getRotation().getW();
+
             //printf("x:%f\ny:%f\n",robot_status.x,robot_status.y);
             //printf("x:%f\ny:%f\nz:%f\nw:%f\n",robot_status.Quaternion[0] ,robot_status.Quaternion[1] ,robot_status.Quaternion[2] ,robot_status.Quaternion[3]);
             //tf_listener.waitForTransform("map","odom",ros::Time(0.1));
@@ -149,4 +163,10 @@ void CRosNode::cbMoveStatus(const actionlib_msgs::GoalStatusArray &msg) {
         robot_status.movebase_status = msg.status_list.begin().base()->status;
     //printf("MoveBaseStatus...%d\n",CRobotStatusTask::robot_status.movebase_status );
 }
+
+void CRosNode::cbScan(const sensor_msgs::LaserScan &msg) {
+    this->scan_ = msg;
+    //printf("scan:%d\n",this->scan_.ranges.size());
+}
+
 #endif

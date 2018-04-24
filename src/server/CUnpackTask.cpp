@@ -7,6 +7,9 @@
 #include "TaskCancelGoal.h"
 #include "TaskNodeCtl.h"
 #include <neo_bridge/TaskCmdVel.h>
+#include <neo_bridge/TaskLidar.h>
+#include <neo_bridge/TaskLoadMap.h>
+#include <neoslam_sdk/mode.h>
 
 CUnpackTask::CUnpackTask(char *bus_buf, int Len, int fd, CThreadPool *busctl_pool)
 :CTask()
@@ -28,8 +31,16 @@ void CUnpackTask::  doAction()
 	P_HEAD head = {0};
 
 	memcpy(&head, buf, sizeof(P_HEAD));
-	//printf("pack id:%d\n",head.funcId);
+	//printf("pack id:%d  fd:%d\n",head.funcId,fd);
 	//DEBUG_LOG((unsigned char*)buf,Len);
+
+	if( !CBackServer::UserDatas.findKey(head.msg_code) ){
+        printf("add user %d\n",head.msg_code);
+        Neo_Type::UserData user(head.msg_code);
+        CBackServer::UserDatas.set(head.msg_code, user);
+        printf("size:%d\n",CBackServer::UserDatas.size());
+	}
+
 	switch(head.funcId)
 	{
 		case PACK_HEARD:
@@ -48,8 +59,13 @@ void CUnpackTask::  doAction()
             busctl_pool->addTask( new CNodeCtlTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(NODECTL_PACKAGE_POP)) );
             break;
 		case PACK_CMDVEL:
-			busctl_pool->addTask( new CCmdVelTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(CMDVEL_PACKAGE_POP)));
+			busctl_pool->addTask( new CCmdVelTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(CMDVEL_PACKAGE_POP)) );
 			break;
+		case PACK_LIDAR:
+			busctl_pool->addTask( new CLidarTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(LIDAR_PACKAGE_POP)) );
+			break;
+        case PACK_LOADMAP:
+            busctl_pool->addTask( new CLoadMapTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(LOADMAP_PACKAGE_POP)) );
 	default:
 		break;
 	}

@@ -5,6 +5,9 @@
 #ifndef NEO_BRIDGE_MODE_H
 #define NEO_BRIDGE_MODE_H
 
+
+
+
 namespace neoslam_sdk{
     enum nMode{
         mode_unknow = 0,

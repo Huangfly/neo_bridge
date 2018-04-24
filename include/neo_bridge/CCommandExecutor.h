@@ -19,6 +19,7 @@ public:
     virtual bool Kill() = 0;
 protected:
     std::string cmd_;
+    std::string cmd_kill_;
     pid_t pid;
 };
 

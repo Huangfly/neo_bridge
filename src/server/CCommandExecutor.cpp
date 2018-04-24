@@ -35,10 +35,12 @@ int CmdProcessOpen(const char *cmdstring, const char *outfilename)
 
     if( outfilename == NULL )
     {
-        return -1;
+        sprintf(new_cmd,"%s",cmdstring);
+    }else{
+        sprintf(new_cmd,"%s > %s",cmdstring,outfilename);
     }
     signal(SIGCHLD, SIG_IGN);
-    sprintf(new_cmd,"%s > %s",cmdstring,outfilename);
+
     printf("%s\n",new_cmd);
     if ( (pid = fork()) < 0)
         return -1;   /* errno set by fork() */

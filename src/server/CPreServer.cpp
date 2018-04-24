@@ -62,24 +62,17 @@ void CPrintThread::Run()
 	int connect_time = 0;
 	while (1)
 	{
-#ifndef NO_SCREEN 
+
 		sleep(1);
+#ifndef NO_SCREEN
 		printf("=============================================================================\n");
 		printf("connect: %d\n", connect_Count);
 		printf("package: RX-%d  TX-%d\n", rcv_Count, ack_Count);
 		printf("=============================================================================\n");
 #endif		
-/*		//ÿ1룬ÿ¼ûֵ1
-		for (it = user_list.begin(); it != user_list.end(); it++)
-		{
-			it->second--;
-		}
-		for (it = connect_list.begin(); it != connect_list.end(); it++)
-		{
-			it->second--;
-		}
-		//ÿ5룬ÿûֵǷΪ5Ϊ5˵û5ûյ
-		if (time > 5)
+
+
+	/*	if (time > 5)
 		{
 			for (it = user_list.begin(); it != user_list.end(); it++)
 			{
@@ -93,9 +86,9 @@ void CPrintThread::Run()
 				}
 			}
 			time = 0;
-		}
-		//ÿ2ӣδ½
-		if (connect_time > 10)
+		}*/
+
+		/*if (connect_time > CLIENTEPOLL_TIMEOUT)
 		{
 			for (it = connect_list.begin(); it != connect_list.end(); it++)
 			{
@@ -121,9 +114,10 @@ void CClientEpollThread::Run()
 }
 
 //Ӧ
-CSendPackTask::CSendPackTask(char *buf, int Len, int fd, P_HEAD *ack_head)
+CSendPackTask::CSendPackTask(char *buf, int Len, int fd, P_HEAD *ack_head,CClientEpoll *client_epoll)
 :CTask()
 {
+	this->client_epoll = client_epoll;
 	this->buf = new char[Len];
 	memcpy(this->buf,buf,Len);
 	this->Len = Len;
@@ -143,6 +137,12 @@ void CSendPackTask::doAction()
 	int ctl = 0;
 	write_ack.setFd(fd);
 	ctl = write_ack.Write(buf, Len);
+	if (ctl < 0)
+	{
+		//client_epoll->DelEvent(fd, EPOLLOUT);
+		//close(fd);
+		//connect_list.erase(fd);
+	}
 	//printf("write succese fd = %d",fd);
 	ack_Count++;
 /*	if(ctl > 0)
@@ -186,14 +186,15 @@ void CSendPackTask::doAction()
 	}*/
 }
 
-CRcvAckThread::CRcvAckThread()
+CRcvAckThread::CRcvAckThread(CClientEpoll *client_epoll)
 {
+	this->client_epoll = client_epoll;
 	this->sendack_poll = new CThreadPool(20);
 }
 
 void CRcvAckThread::Run()
 {
-	char ack_buf[1200] = {0};
+	char ack_buf[4096] = {0};
 	int Len;
 	int fd;
 	
@@ -206,7 +207,7 @@ void CRcvAckThread::Run()
 		if (Len > 10)
 		{
             //printf("ack pack len = %d ; num:%d\n",Len,ack_buf[1]);
-			this->sendack_poll->addTask(new CSendPackTask(ack_buf, Len, fd, &head));
+			this->sendack_poll->addTask(new CSendPackTask(ack_buf, Len, fd, &head,this->client_epoll));
 			Len = 0;
 		}
 	}
@@ -226,76 +227,80 @@ CPreServer::~CPreServer()
 void CPreServer::Exec(int argc,char **argv)
 {
 
-	struct ifaddrs * ifAddrStruct=NULL;
-	void * tmpAddrPtr=NULL;
-	char Myaddress[INET_ADDRSTRLEN];
+	while(1) {
+		isRestart = false;
+		struct ifaddrs *ifAddrStruct = NULL;
+		void *tmpAddrPtr = NULL;
+		char Myaddress[INET_ADDRSTRLEN];
 
-	getifaddrs(&ifAddrStruct);
+		getifaddrs(&ifAddrStruct);
 
-	while (ifAddrStruct!=NULL)
-	{
-		if (ifAddrStruct->ifa_addr->sa_family==AF_INET)
-		{   // check it is IP4
-			// is a valid IP4 Address
-			tmpAddrPtr = &((struct sockaddr_in *)ifAddrStruct->ifa_addr)->sin_addr;
-			char addressBuffer[INET_ADDRSTRLEN];
-			inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-			//printf("%s IPV4 Address %s\n", ifAddrStruct->ifa_name, addressBuffer);
-			if(memcmp(addressBuffer,"192.168",7)==0)
-			{
-				memcpy(Myaddress,addressBuffer,strlen(addressBuffer)+1);
+		while (ifAddrStruct != NULL) {
+			if (ifAddrStruct->ifa_addr->sa_family == AF_INET) {   // check it is IP4
+				// is a valid IP4 Address
+				tmpAddrPtr = &((struct sockaddr_in *) ifAddrStruct->ifa_addr)->sin_addr;
+				char addressBuffer[INET_ADDRSTRLEN];
+				inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+				//printf("%s IPV4 Address %s\n", ifAddrStruct->ifa_name, addressBuffer);
+				if (memcmp(addressBuffer, "192.168", 7) == 0) {
+					memcpy(Myaddress, addressBuffer, strlen(addressBuffer) + 1);
+				}
+			} else if (ifAddrStruct->ifa_addr->sa_family == AF_INET6) {   // check it is IP6
+				// is a valid IP6 Address
+				tmpAddrPtr = &((struct sockaddr_in *) ifAddrStruct->ifa_addr)->sin_addr;
+				char addressBuffer[INET6_ADDRSTRLEN];
+				inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
+				//printf("%s IPV6 Address %s\n", ifAddrStruct->ifa_name, addressBuffer);
 			}
+			ifAddrStruct = ifAddrStruct->ifa_next;
 		}
-		else if (ifAddrStruct->ifa_addr->sa_family==AF_INET6)
-		{   // check it is IP6
-			// is a valid IP6 Address
-			tmpAddrPtr=&((struct sockaddr_in *)ifAddrStruct->ifa_addr)->sin_addr;
-			char addressBuffer[INET6_ADDRSTRLEN];
-			inet_ntop(AF_INET6, tmpAddrPtr, addressBuffer, INET6_ADDRSTRLEN);
-			//printf("%s IPV6 Address %s\n", ifAddrStruct->ifa_name, addressBuffer);
+		printf("host Ip:%s\n", Myaddress);
+		CHostAddr Server_addr(Myaddress, 8888);
+		//
+		CClientEpoll client_epoll(10001);//
+		//
+		CServerEpoll server_epoll(&Server_addr, 1000, &client_epoll);
+
+		bool ret;
+
+		ret = server_epoll.Connect();
+		if (ret == true) {
+			//break;
+		} else {
+			return;
 		}
-		ifAddrStruct = ifAddrStruct->ifa_next;
-	}
-    printf("host Ip:%s\n",Myaddress);
-	CHostAddr Server_addr(Myaddress, 8888);
-	//
-	CClientEpoll client_epoll(10001);//
-	//
-	CServerEpoll server_epoll(&Server_addr, 1000, &client_epoll);
+		//ClientEpoll
+		CClientEpollThread client_thread(&client_epoll);
+		client_thread.Create();
+		//
+		CPrintThread printf_thread(&client_epoll);
+		printf_thread.Create();
+		//
+		CRcvAckThread rcvAck_Thread(&client_epoll);
+		rcvAck_Thread.Create();
+		///////////////////////////////////
 
-	bool ret;
-	
-	ret = server_epoll.Connect();
-	if (ret == true)
-	{
-		//break;
-	}
-	else
-	{
-        return;
-	}
-	//ClientEpoll
-	CClientEpollThread client_thread(&client_epoll);
-	client_thread.Create();
-	//
-	CPrintThread printf_thread(&client_epoll);
-	printf_thread.Create();
-	//
-	CRcvAckThread rcvAck_Thread;
-	rcvAck_Thread.Create();
-    ///////////////////////////////////
-
-    //CRosNode rosnode;
-    //rosnode.Create();
+		//CRosNode rosnode;
+		//rosnode.Create();
 #ifdef USE_ROS
-    while(systerm_exit == false)
-    {
-        server_epoll.Wait(50);
-        //printf("CPreServer %d\n",systerm_exit);
-        //ros::spinOnce();
-    }
+		while (!isRestart) {
+			server_epoll.Wait(10);
+			//printf("CPreServer %d\n",systerm_exit);
+			//ros::spinOnce();
+		}
+		if(isRestart){
+
+			rcvAck_Thread.Cancel();
+			printf_thread.Cancel();
+			client_thread.Cancel();
+		}
 #else
-    server_epoll.Start(-1);
+		server_epoll.Start(-1);
 #endif
+	}
     printf("CPreServer exit.\n");
+}
+
+void CPreServer::Restart() {
+	this->isRestart = true;
 }

@@ -17,6 +17,7 @@
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <actionlib_msgs/GoalStatusArray.h>
+#include <sensor_msgs/LaserScan.h>
 #include <tf/tf.h>
 #include <tf/transform_listener.h>
 
@@ -39,12 +40,14 @@ public:
     void cbMap(const nav_msgs::OccupancyGrid::ConstPtr &msg);
     void cbOdom(const nav_msgs::Odometry &msg);
     void cbMoveStatus(const actionlib_msgs::GoalStatusArray &msg);
+    void cbScan(const sensor_msgs::LaserScan &msg);
 
     ros::NodeHandle nh;
     ros::NodeHandle nhp;
     ros::Subscriber sub_map_;
     ros::Subscriber sub_odom_;
     ros::Subscriber sub_moveStatus_;
+    ros::Subscriber sub_scan_;
     ros::Publisher  pub_goal_;
     ros::Publisher  pub_initialPose_;
     ros::Publisher  pub_cancelGoal_;
@@ -53,7 +56,9 @@ public:
 
     std::string workdir;
     static nav_msgs::OccupancyGrid map_base_;
+    static sensor_msgs::LaserScan scan_;
     static STATUS_PACKAGE_ACK robot_status;
+    static STATUS_PACKAGE_ACK laser_pose;
 };
 
 #endif //NEO_BRIDGE_CROSNODE_H

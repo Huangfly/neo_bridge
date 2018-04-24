@@ -4,11 +4,13 @@
 #include <neo_bridge/CRosNodeManager.h>
 #include <neo_bridge/RosRobotCtl.h>
 #include <neo_bridge/RosLidarCtl.h>
-#include <neo_bridge/RosSlamCtl.h>
+#include <neo_bridge/RosMappingCtl.h>
 #include <neo_bridge/RosNavigationCtl.h>
 #include <neo_bridge/CCommandExecutor.h>
 #include "CMappingNode.h"
 #include <neo_bridge/RosExploreCtl.h>
+#include <neo_bridge/RosLocationCtl.h>
+
 #define WORKSPACE_BASH_DIR "/home/huang/stage_ws"
 //#define
 
@@ -17,9 +19,10 @@ vector<NODE_INFO> CRosNodeManager::ctlNodeList = vector<NODE_INFO>();
 CMappingNode *mappingNode;
 RosRobotCtl *rosRobotCtl = NULL;
 RosLidarCtl *rosLidarCtl = NULL;
-RosSlamCtl  *rosSlamCtl = NULL;
+RosMappingCtl  *rosMappingCtl = NULL;
 RosNavigationCtl *rosNavigationCtl = NULL;
 RosExploreCtl *rosExploreCtl = NULL;
+RosLocationCtl *rosLocationCtl = NULL;
 CommandExecutor *rosNodeList[5];
 
 std::vector<std::string> split(std::string str,std::string pattern)
@@ -71,9 +74,10 @@ CRosNodeManager::CRosNodeManager()
 
     rosRobotCtl = new RosRobotCtl();
     rosLidarCtl = new RosLidarCtl();
-    rosSlamCtl  = new RosSlamCtl();
+    rosMappingCtl  = new RosMappingCtl();
     rosNavigationCtl = new RosNavigationCtl();
     rosExploreCtl = new RosExploreCtl();
+    rosLocationCtl = new RosLocationCtl();
     //rosRobotCtl->ReturnValue();
 }
 
@@ -154,12 +158,14 @@ bool CRosNodeManager::funcCtlNode(std::string node_str,bool enable)
             return rosRobotCtl->Done();
         }else if(node_str == "lidar"){
             return rosLidarCtl->Done();
-        }else if(node_str == "slam"){
-            return rosSlamCtl->Done();
+        }else if(node_str == "mapping"){
+            return rosMappingCtl->Done();
         }else if(node_str == "navigation"){
             return rosNavigationCtl->Done();
         }else if(node_str == "explore"){
             return rosExploreCtl->Done();
+        }else if(node_str == "location"){
+            return rosLocationCtl->Done();
         }else{
             return false;
         }
@@ -168,12 +174,14 @@ bool CRosNodeManager::funcCtlNode(std::string node_str,bool enable)
             return rosRobotCtl->Kill();
         }else if(node_str == "lidar"){
             return rosLidarCtl->Kill();
-        }else if(node_str == "slam"){
-            return rosSlamCtl->Kill();
+        }else if(node_str == "mapping"){
+            return rosMappingCtl->Kill();
         }else if(node_str == "navigation"){
             return rosNavigationCtl->Kill();
         }else if(node_str == "explore"){
             return rosExploreCtl->Kill();
+        }else if(node_str == "location"){
+            return rosLocationCtl->Kill();
         }else{
             return false;
         }

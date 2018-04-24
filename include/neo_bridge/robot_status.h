@@ -49,7 +49,7 @@ class CRobotStatusTask:public CTask
 private:
 
     packet_head head;
-
+    STATUS_PACKAGE_POP recv_data;
     int fd;
 public:
 

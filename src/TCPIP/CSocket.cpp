@@ -32,7 +32,6 @@ bool CSocket::Create()
 	return true;
 }
 
-//׽ֵİ
 bool CSocket::Bind(CHostAddr &addr)
 {
 	int trl = 1;

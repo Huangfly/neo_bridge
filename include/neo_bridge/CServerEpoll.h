@@ -7,6 +7,9 @@
 #include "CThreadPool.h"
 #include "CClientEpoll.h"
 #include <map>
+#include "neoslam_sdk/neo_map.hpp"
+
+using namespace Neo;
 
 class CServerEpoll:public CEpollBase
 {
@@ -16,6 +19,8 @@ public:
 	bool Connect();
 	void onEvent();
 	virtual void onConnect(char *buf, int fd, int nRead);
+
+    static Neo::MutexMap<int,int> _connect_fds_count;
 protected:
 	int nlisten;
 	CHostAddr *addr;

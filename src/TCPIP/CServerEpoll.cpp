@@ -1,8 +1,11 @@
 #include "CServerEpoll.h"
 
+
 extern int connect_Count;
 extern map<int,int> user_list;
 extern map<int,int> connect_list;
+Neo::MutexMap<int,int> CServerEpoll::_connect_fds_count(1024);
+
 
 CServerEpoll::CServerEpoll(CHostAddr *addr, int nListen, CClientEpoll *client_epoll)
 :CEpollBase(1)
@@ -47,8 +50,11 @@ void CServerEpoll::onEvent()
 void CServerEpoll::onConnect(char *buf, int fd, int nRead)
 {
 	int newfd;
+	//printf("OnConnect.%d\n",fd);
 	newfd = accept(server.getFd(), NULL, NULL);
+    //printf("OnConnect1.%d\n",newfd);
+    _connect_fds_count.inset(std::pair<int,int>(newfd, 10));
+    //printf("OnConnect2.%d\n",newfd);
 	client_epoll->AddEvent(newfd, EPOLLIN | EPOLLET);
-	connect_list.insert(pair<int,int>(newfd, 10));
-	connect_Count++;
 }
+

@@ -37,6 +37,7 @@ bool CEpollBase::AddEvent(int fd, __uint32_t events)
 	event.events = events;
 	event.data.fd = fd;
 	ctl = epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &event);
+	//printf("add %d\n",fd);
 	if (ctl == -1)
 	{
 		perror("AddEvent fail.");
@@ -86,7 +87,8 @@ bool CEpollBase::Wait(int timeout)
 	}
 	else
 	{
-		//printf("onEvent.\n");
+		//printf("onEvent %d.\n",m_epollfd);
+
 		onEvent();
 	}
 	return (m_result == -1) ? false : true;

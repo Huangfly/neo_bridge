@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(neo_bridge)
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #=================================================
 #    find package
 #=================================================
@@ -27,7 +27,7 @@ include_directories(
 #    GLOB
 #=================================================
 file(GLOB INCLUDE_PATH_LIST RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} include/neo_bridge/*.h)
-
+file(GLOB INCLUDE_HPP_PATH_LIST RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} include/neo_bridge/*.hpp)
 file(GLOB NODE_CPP_PATH_LIST RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 file(GLOB COMMON_CPP_PATH RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/common/*.cpp)
 file(GLOB SERVER_CPP_PATH RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/server/*.cpp)
@@ -48,7 +48,7 @@ target_link_libraries(tcpip common)
 #=================================================
 #    executable
 #=================================================
-add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosSlamCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosSlamCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/Type_CmdVel.h include/neo_bridge/TaskCmdVel.h)
+add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosMappingCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosMappingCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/Type_CmdVel.h include/neo_bridge/TaskCmdVel.h src/server/TaskLidar.cpp include/neo_bridge/TaskLidar.h include/neoslam_sdk/Type_Lidar.h include/neo_bridge/Debug.h include/neoslam_sdk/Type_Pose.h include/neoslam_sdk/neo_map.hpp src/server/TaskLoadMap.cpp include/neo_bridge/TaskLoadMap.h include/neoslam_sdk/Type_LoadMap.h include/neoslam_sdk/Type_UserData.h src/server/RosLocationCtl.cpp include/neo_bridge/RosLocationCtl.h)
 target_link_libraries(${PROJECT_NAME}_node
         ${catkin_LIBRARIES}
         common

@@ -3,6 +3,7 @@
 
 extern CShareMem shm_bus;
 extern bool systerm_exit;
+Neo::MutexMap<unsigned int, Neo_Type::UserData> CBackServer::UserDatas(1024);
 
 CBackServer::CBackServer()
 {
@@ -16,7 +17,7 @@ CBackServer::~CBackServer()
 
 void CBackServer::Exec(int argc,char **argv)
 {
-	char bus_pack[200] = {0};
+	char bus_pack[2200] = {0};
 	P_HEAD head = {0};
 	int Len = 0;
 	int fd;

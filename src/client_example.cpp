@@ -12,12 +12,17 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <signal.h>
+#include <memory>
+#include <iostream>
+#include <algorithm>
+#include "neoslam_sdk/Type_UserData.h"
 
+using namespace Neo_Type;
 
 #define PORT 8888  /* server port */
 
 #define MAXDATASIZE 600
-
+using namespace std;
 
 typedef struct packet_head
 {
@@ -46,128 +51,31 @@ static pid_t    *childpid = NULL;
 /* ptr to array allocated at run-time */
 static int      maxfd;  /* from our open_max(), {Prog openmax} */
 
-#define SHELL   "/bin/sh"
 
-int killProcess(pid_t pid)
-{
-    char popbuffer[20] = {0};
-    if(pid < 500)
-        return false;
-    sprintf(popbuffer,"kill %d",pid);
-    return system(popbuffer);
-}
-int killProcessRosLaunch(char *cmd_name)
-{
-
-    char popbuffer[120] = {0};
-    sprintf(popbuffer,"kill -2 $(ps -au | grep \"%s\"|grep \"/usr/bin/python\"|awk '{print $2}')",cmd_name);
-    printf("%s\n",popbuffer);
-    return system(popbuffer);
-}
-FILE *
-mypopen(const char *cmdstring, const char *type, pid_t &cmd_pid)
-{
-    int     i, pfd[2];
-    pid_t   pid;
-    FILE    *fp;
-
-    /* only allow "r" or "w" */
-    if ((type[0] != 'r' && type[0] != 'w') || type[1] != 0) {
-        errno = EINVAL;     /* required by POSIX.2 */
-        return(NULL);
+class A{
+public:
+    A(){
+        printf("A\n");
     }
+};
 
-    if (childpid == NULL) {     /* first time through */
-        /* allocate zeroed out array for child pids */
-        maxfd = 10;
-        if ( (childpid = (pid_t *)calloc(maxfd, sizeof(pid_t))) == NULL)
-            return(NULL);
+class B:public A{
+public:
+    B(){
+        printf("B\n");
     }
-
-    if (pipe(pfd) < 0)
-        return(NULL);   /* errno set by pipe() */
-
-    if ( (pid = fork()) < 0)
-        return(NULL);   /* errno set by fork() */
-    else if (pid == 0) {                            /* child */
-        if (*type == 'r') {
-            close(pfd[0]);
-            if (pfd[1] != STDOUT_FILENO) {
-                dup2(pfd[1], STDOUT_FILENO);
-                close(pfd[1]);
-            }
-        } else {
-            close(pfd[1]);
-            if (pfd[0] != STDIN_FILENO) {
-                dup2(pfd[0], STDIN_FILENO);
-                close(pfd[0]);
-            }
-        }
-        /* close all descriptors in childpid[] */
-        for (i = 0; i < maxfd; i++)
-            if (childpid[ i ] > 0)
-                close(i);
-
-        execl(SHELL, "sh", "-c", cmdstring, (char *) 0);
-        _exit(127);
-    }
-
-    cmd_pid = pid;
-    /* parent */
-    if (*type == 'r') {
-        close(pfd[1]);
-        if ( (fp = fdopen(pfd[0], type)) == NULL)
-            return(NULL);
-    } else {
-        close(pfd[0]);
-        if ( (fp = fdopen(pfd[1], type)) == NULL)
-            return(NULL);
-    }
-    childpid[fileno(fp)] = pid; /* remember child pid for this fd */
-    return(fp);
-}
-
-
-
-int CmdProcessOpen(const char *cmdstring, const char *outfilename)
-{
-    int     i, pfd;
-    pid_t   pid;
-    char new_cmd[256] = {0};
-
-    if(cmdstring == NULL)return -1;
-
-    if( outfilename == NULL )
-    {
-        return -1;
-    }
-
-    sprintf(new_cmd,"%s 2 >& 1 %s",cmdstring,outfilename);
-    printf("%s\n",new_cmd);
-    if ( (pid = fork()) < 0)
-        return -1;   /* errno set by fork() */
-    else if (pid == 0) {                            /* child */
-        execl(SHELL, "sh", "-c", new_cmd, (char *) 0);
-        _exit(127);
-    }
-
-
-
-    return pid;
-}
+};
 
 int main(int argc, char *argv[]) {
-    std::string str;
-    str = "";
-    pid_t cmd_pid;
-    char buffer[256] = {0};
-    std::string cmd_name = "rostopic hz /rosout";
-    signal(SIGCHLD, SIG_IGN);
-    //FILE *fp = mypopen("top", "r", cmd_pid);
-    cmd_pid = CmdProcessOpen(cmd_name.c_str(), "./lll.log");
-    char ch;
 
+    B c_ptr;
+    printf("add user\n");
+    std::map<int,Neo_Type::UserData> aaa;
 
+    Neo_Type::UserData user(0);
+    aaa.insert(pair<int,Neo_Type::UserData>(0,user));
+    //CBackServer::UserDatas.set(head.msg_code, user);
+    printf("size:%d\n",aaa.size());
 /*
     while( (ch = fgetc(fp)) > 0 )
     {
@@ -176,13 +84,13 @@ int main(int argc, char *argv[]) {
         str.push_back(ch);
     }*/
     //printf("aa-----------------\n");
-    printf("--------------\n%d\n", cmd_pid);
+    //printf("--------------\n%d\n", cmd_pid);
     //killProcess(cmd_pid);
     //pclose(fp);
     //sleep(3);
-    killProcessRosLaunch((char *) cmd_name.c_str());
-    printf("dsadsa\n");
-    while(1);
+    //killProcessRosLaunch((char *) cmd_name.c_str());
+    //printf("dsadsa\n");
+    //while(1);
     /*popen("bash /home/huang/stage_ws/slam.sh","w");
     while(1)
     {

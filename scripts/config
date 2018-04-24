@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "navigation bash."
+mkdir -p ~/neoware/log
+mkdir -p ~/neoware/maps
+mkdir -p ~/neoware/bashfile
+
+

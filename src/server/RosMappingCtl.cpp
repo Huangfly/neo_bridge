@@ -2,30 +2,34 @@
 // Created by huang on 18-2-28.
 //
 
-#include <neo_bridge/RosSlamCtl.h>
+#include <neo_bridge/RosMappingCtl.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
 
 
-RosSlamCtl::RosSlamCtl():CommandExecutor("") {
+RosMappingCtl::RosMappingCtl():CommandExecutor("") {
     this->isRun = false;
+    this->cmd_ = "bash ~/.neoware/bashfile/mapping.sh";//"roslaunch micvision_mapping mapping_neo.launch";
+    this->cmd_kill_ = "bash ~/.neoware/bashfile/mapping_kill.sh";
 }
 
-RosSlamCtl::~RosSlamCtl() {
+RosMappingCtl::~RosMappingCtl() {
 
 }
 
-bool RosSlamCtl::Done() {
+bool RosMappingCtl::Done() {
     if(isRun)return true;
-    //CmdProcessOpen("roslaunch ","cartographer.log");
+    printf("Start Mapping\n");
+    this->pid = CmdProcessOpen(this->cmd_.c_str(),NULL);
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|run'\" ","r");
+    printf("success %d\n",this->pid);
     isRun = true;
     return true;
 }
 
-int RosSlamCtl::ReturnValue() {
+int RosMappingCtl::ReturnValue() {
     std::string str = "";
     FILE* fp = popen("rostopic info /map","r");
     char ch;
@@ -42,8 +46,9 @@ int RosSlamCtl::ReturnValue() {
     return 1;
 }
 
-bool RosSlamCtl::Kill() {
+bool RosMappingCtl::Kill() {
     if(!isRun)return true;
+    this->pid = CmdProcessOpen(this->cmd_kill_.c_str(),NULL);
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|kill'\" ","r");
     isRun = false;
     return true;

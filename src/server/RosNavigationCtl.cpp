@@ -10,7 +10,7 @@
 
 RosNavigationCtl::RosNavigationCtl():CommandExecutor("") {
     this->isRun = false;
-    this->cmd_ = "roslaunch micvision_mapping mapping_neo.launch";
+    this->cmd_ = "bash /home/huang/.neoware/bashfile/navigation.sh";
 }
 
 RosNavigationCtl::~RosNavigationCtl() {
@@ -20,7 +20,8 @@ RosNavigationCtl::~RosNavigationCtl() {
 bool RosNavigationCtl::Done() {
     if(isRun)return true;
     printf("Start Navigation\n");
-    this->pid = CmdProcessOpen(this->cmd_.c_str(),"~/log/mapping_neo.log");
+    printf("asdas111\n");
+    this->pid = CmdProcessOpen(this->cmd_.c_str(),NULL);
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|run'\" ","r");
     printf("success %d\n",this->pid);
     isRun = true;
@@ -49,7 +50,8 @@ int RosNavigationCtl::ReturnValue() {
 
 bool RosNavigationCtl::Kill() {
     if(!isRun)return true;
-    killProcessRosLaunch((char *) this->cmd_.c_str());
+    //this->pid = CmdProcessOpen(this->cmd_.c_str(),NULL);
+    killProcessRosLaunch((char *) this->cmd_kill_.c_str());
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|kill'\" ","r");
     printf("Stop navigation\n");
     isRun = false;

@@ -31,7 +31,7 @@ void CNodeCtlTask::doAction() {
 
     str = pop.node_name;
 
-    printf("action node :%s\n",pop.node_name);
+    printf("action node :%s %d\n",pop.node_name,pop.enable);
     if(CRosNodeManager::funcCtlNode(str,pop.enable) == false)
     {
         sprintf(ack.ack,"fail.");
@@ -40,7 +40,7 @@ void CNodeCtlTask::doAction() {
     else
     {
         sprintf(ack.ack,"ok.");
-        printf("node ok.");
+        printf("node ok.\n");
     }
 
 

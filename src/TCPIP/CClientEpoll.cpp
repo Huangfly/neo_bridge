@@ -1,5 +1,6 @@
 #include "CClientEpoll.h"
 #include "CUnpackTask.h"
+#include "CServerEpoll.h"
 
 extern map<int,int> user_list;
 extern map<int,int> connect_list;
@@ -31,10 +32,12 @@ void CClientEpoll::onEvent()
 	int nRead;
 	int i = 0;
 	char acBuf[1024] = {0};
-	
+
+	//printf("read\n");
 	for (i = 0; i<m_result; i++)
 	{
 		nRead = read(m_retEvents[i].data.fd, acBuf, 1024);
+        //printf("read %d %d.\n",nRead,m_retEvents[i].events);
 		ModEvent(m_retEvents[i].data.fd,EPOLLIN | EPOLLET);
 		if (nRead <= 0)
 		{
@@ -50,23 +53,21 @@ void CClientEpoll::onEvent()
 //ͻ˵ļͻ˶ϿӺĴ
 void CClientEpoll::onQuit(char *buf, int fd, int nRead)
 {
-	//printf("onQuie.\n");
-	if (user_list.find(fd) != user_list.end())
+	//
+	if (CServerEpoll::_connect_fds_count.erase(fd))
 	{
-		user_list.erase(fd);
-		user_Count--;
-	}
-	else if (connect_list.find(fd) != connect_list.end())
-	{
-		connect_list.erase(fd);
+		if(!DelEvent(fd, EPOLLOUT)){
+			printf("DelEvent fail.\n");
+			exit(1);
+		}
+		close(fd);
 	}
 	else
 	{
-		return;
+		printf("error onQuie.%d  %d\n",fd,nRead);
+        exit(1);
 	}
-	DelEvent(fd, EPOLLOUT);
-	close(fd);
-	connect_Count--;
+
 }
 
 //ͻ˵ļȡİڴ˴
@@ -76,6 +77,7 @@ void CClientEpoll::onData(char *buf, int fd, int nRead)
 	int pos = 0;
 	int funcId = 0;
 
+	//printf("onData.%d\n",fd);
 	//൱ڼʼmapֵ
 	map<int,int>::iterator it;
 	it = user_list.find(fd);
@@ -87,7 +89,7 @@ void CClientEpoll::onData(char *buf, int fd, int nRead)
 	it = connect_list.find(fd);
 	if (it != connect_list.end())
 	{
-		it->second = 10;
+		it->second = CLIENTEPOLL_TIMEOUT;
 	}
 	m_BusPool->addTask(new CUnDataPackTask(buf, nRead, fd, m_BusPool));
 }
@@ -164,6 +166,7 @@ void CUnDataPackTask::doAction()
             if (memcmp(buf + i + head.size + HEAD_LEN + 1, end_str, HEAD_LEN) == 0)//ȡİ
 			{
 				//printf("receive package.\n");
+				//if(head.funcId == PACK_HEARD) printf("===%d\n",*(buf+i+HEAD_LEN+sizeof(head)));
 				//m_BusPool->addTask(new CUnpackTask(buf, head.size, fd, m_BusPool));
 				m_BusPool->addTask(new CBusTask(buf + i + HEAD_LEN, fd, head.size));
 				i += (head.size - 1);

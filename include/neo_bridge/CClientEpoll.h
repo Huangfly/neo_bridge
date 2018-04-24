@@ -7,6 +7,10 @@
 #include "CShareMem.h"
 #include "packet.h"
 #include <map>
+#include <neoslam_sdk/neo_map.hpp>
+
+
+#define CLIENTEPOLL_TIMEOUT 3
 
 class CClientEpoll:public CEpollBase
 {
@@ -18,7 +22,8 @@ public:
 	virtual void onData(char *buf, int fd, int nRead);
 	int* GetnConnect();
 protected:
-	int m_nConnect;//ǰӣĸ
+	int m_nConnect;//
+
 	CThreadPool *m_BusPool;
 };
 

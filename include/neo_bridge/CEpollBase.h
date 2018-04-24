@@ -24,7 +24,7 @@ public:
 protected:
 	struct epoll_event *m_retEvents;
 	int m_maxEvent;
-	int m_result;//返回的事件个数
+	int m_result;
 	int m_epollfd;
 	bool m_bStop;
 };

@@ -7,13 +7,13 @@
 
 #include <neo_bridge/CCommandExecutor.h>
 
-class RosSlamCtl:public CommandExecutor
+class RosMappingCtl:public CommandExecutor
 {
 private:
     bool isRun;
 public:
-    RosSlamCtl();
-    ~RosSlamCtl();
+    RosMappingCtl();
+    ~RosMappingCtl();
 
     bool Done();
     int ReturnValue();

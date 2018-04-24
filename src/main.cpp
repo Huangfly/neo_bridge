@@ -27,8 +27,8 @@ void PreProcess(int argc, char *argv[]);//
 void BackProcess(int argc, char *argv[]);
 //////////
 //
-CShareMem shm_bus(SHMBUS_KEY, SEMBUS_KEY, 50, 80);
-CShareMem shm_ack(SHMACK_KEY, SEMACK_KEY, 50, 600);
+CShareMem shm_bus(SHMBUS_KEY, SEMBUS_KEY, 50, 1024);
+CShareMem shm_ack(SHMACK_KEY, SEMACK_KEY, 50, 3072);
 //CLog server_log(SEMLOG_KEY);
 map<int,int> user_list;
 map<int,int> connect_list;
