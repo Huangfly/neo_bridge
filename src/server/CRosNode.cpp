@@ -137,13 +137,11 @@ void CRosNode::cbMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
     static ros::Time pre_time = ros::Time::now();
     ros::Time cur_time = ros::Time::now();
 
-    if( (cur_time.toNSec() - pre_time.toNSec()) > 500000000 )
-    {
-        //printf("time %ld %ld\n",cur_time.toNSec(),pre_time.toNSec());
-        pre_time = cur_time;
-        this->map_base_ = *msg;
-        robot_status.updateMap = 1;
-    }
+
+    //printf("time %ld %ld\n",cur_time.toNSec(),pre_time.toNSec());
+    pre_time = cur_time;
+    this->map_base_ = *msg;
+    robot_status.updateMap = 1;
     //printf("recv Map...%d\n",robot_status.updateMap );
 }
 

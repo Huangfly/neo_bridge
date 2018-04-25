@@ -14,13 +14,13 @@ RosLocationCtl::~RosLocationCtl() {
 }
 
 bool RosLocationCtl::Done() {
-    if(isRun)return true;
+    //if(isRun)return true;
     printf("Start Location\n");
     //this->pid = CmdProcessOpen(this->cmd_.c_str(),"~/log/mapping_neo.log");
     int ret = system(this->cmd_.c_str());
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|run'\" ","r");
     printf("status %d\n",ret);
-    isRun = true;
+    //isRun = true;
     return true;
 }
 

@@ -1,8 +1,10 @@
 #!/bin/bash
 
-echo "navigation bash."
+echo "neo_bridge create work dir."
 mkdir -p ~/neoware/log
 mkdir -p ~/neoware/maps
 mkdir -p ~/neoware/bashfile
 
+cp mapping.sh mapping_kill.sh navigation.sh navigation_kill.sh ~/neoware/bashfile/
 
+echo "install end."
