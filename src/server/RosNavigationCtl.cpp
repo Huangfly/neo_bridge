@@ -6,11 +6,15 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
+#include <neo_bridge/CConfig.h>
 
+using namespace Neo_Config;
 
 RosNavigationCtl::RosNavigationCtl():CommandExecutor("") {
     this->isRun = false;
-    this->cmd_ = "bash /home/huang/.neoware/bashfile/navigation.sh";
+    Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
+    this->cmd_ = config_ptr->navigationDir_;
+    this->cmd_kill_ = config_ptr->navigationKillDir_;
 }
 
 RosNavigationCtl::~RosNavigationCtl() {
@@ -51,7 +55,7 @@ int RosNavigationCtl::ReturnValue() {
 bool RosNavigationCtl::Kill() {
     if(!isRun)return true;
     //this->pid = CmdProcessOpen(this->cmd_.c_str(),NULL);
-    killProcessRosLaunch((char *) this->cmd_kill_.c_str());
+    CmdProcessOpen((char *) this->cmd_kill_.c_str(),NULL);
     //popen("rostopic pub /sim_ctl std_msgs/String \"data: 'robot|kill'\" ","r");
     printf("Stop navigation\n");
     isRun = false;

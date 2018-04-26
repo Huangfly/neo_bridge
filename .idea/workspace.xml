@@ -69,10 +69,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1afbfac4-ddff-431c-9348-336ec5732e26" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/include/neo_bridge/CConfig.h" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/server/CConfig.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/config" afterPath="$PROJECT_DIR$/scripts/config" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/CMakeLists.txt" afterPath="$PROJECT_DIR$/CMakeLists.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/CBackServer.cpp" afterPath="$PROJECT_DIR$/src/server/CBackServer.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/CRosNode.cpp" afterPath="$PROJECT_DIR$/src/server/CRosNode.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/RosLocationCtl.cpp" afterPath="$PROJECT_DIR$/src/server/RosLocationCtl.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/RosMappingCtl.cpp" afterPath="$PROJECT_DIR$/src/server/RosMappingCtl.cpp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server/RosNavigationCtl.cpp" afterPath="$PROJECT_DIR$/src/server/RosNavigationCtl.cpp" />
     </list>
     <ignored path="neo_bridge.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -95,7 +99,7 @@
       <file leaf-file-name="CRosNodeManager.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server/CRosNodeManager.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
+            <state relative-caret-position="889">
               <caret line="173" column="38" selection-start-line="173" selection-start-column="38" selection-end-line="173" selection-end-column="38" />
               <folding>
                 <element signature="e#39#78#0" expanded="true" />
@@ -104,22 +108,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TaskMap.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/server/TaskMap.cpp">
+      <file leaf-file-name="CRosNode.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/server/CRosNode.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="150">
+              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+              <folding>
+                <element signature="e#39#75#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CRosNode.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/server/CRosNode.cpp">
+      <file leaf-file-name="CBackServer.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/server/CBackServer.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="454">
-              <caret line="144" column="6" selection-start-line="144" selection-start-column="6" selection-end-line="144" selection-end-column="6" />
-              <folding />
+            <state relative-caret-position="465">
+              <caret line="31" column="10" selection-start-line="31" selection-start-column="10" selection-end-line="31" selection-end-column="10" />
+              <folding>
+                <element signature="e#0#24#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -127,8 +135,8 @@
       <file leaf-file-name="RosMappingCtl.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server/RosMappingCtl.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="47" selection-start-line="11" selection-start-column="47" selection-end-line="11" selection-end-column="47" />
+            <state relative-caret-position="225">
+              <caret line="15" column="74" selection-start-line="15" selection-start-column="74" selection-end-line="15" selection-end-column="74" />
               <folding>
                 <element signature="e#39#76#0" expanded="true" />
               </folding>
@@ -136,61 +144,68 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RosExploreCtl.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/server/RosExploreCtl.cpp">
+      <file leaf-file-name="CRosNode.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/neo_bridge/CRosNode.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="585">
-              <caret line="39" column="11" selection-start-line="39" selection-start-column="11" selection-end-line="39" selection-end-column="11" />
-              <folding />
+            <state relative-caret-position="349">
+              <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
+              <folding>
+                <element signature="e#100#122#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RosNavigationCtl.cpp" pinned="false" current-in-tab="false">
+      <file leaf-file-name="RosNavigationCtl.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/server/RosNavigationCtl.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="750">
-              <caret line="50" column="31" selection-start-line="50" selection-start-column="31" selection-end-line="50" selection-end-column="31" />
+            <state relative-caret-position="165">
+              <caret line="15" column="43" selection-start-line="15" selection-start-column="43" selection-end-line="15" selection-end-column="43" />
+              <folding>
+                <element signature="e#38#78#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CConfig.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/server/CConfig.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="124">
+              <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+              <folding>
+                <element signature="e#38#69#0" expanded="true" />
+                <element signature="e#107#123#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CConfig.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/include/neo_bridge/CConfig.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="36" column="22" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RosLocationCtl.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/server/RosLocationCtl.cpp">
+      <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" column="6" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="6" />
+            <state relative-caret-position="784">
+              <caret line="117" column="17" selection-start-line="117" selection-start-column="17" selection-end-line="117" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RosLocationCtl.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosLocationCtl.h">
+      <file leaf-file-name="lua.h" pinned="false" current-in-tab="false">
+        <entry file="file:///usr/include/lua5.2/lua.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="20" column="11" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RosLidarCtl.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosLidarCtl.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RosMappingCtl.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosMappingCtl.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+            <state relative-caret-position="306">
+              <caret line="345" column="8" selection-start-line="345" selection-start-column="8" selection-end-line="345" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -204,8 +219,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/include/neo_bridge/RosExploreCtl.h" />
-        <option value="$PROJECT_DIR$/src/common/CStreamBase.cpp" />
         <option value="$PROJECT_DIR$/include/neoslam_sdk/Type_CmdVel.h" />
         <option value="$PROJECT_DIR$/include/neo_bridge/TaskCmdVel.h" />
         <option value="$PROJECT_DIR$/src/server/TaskCmdVel.cpp" />
@@ -220,7 +233,6 @@
         <option value="$PROJECT_DIR$/include/neo_bridge/TaskLidar.h" />
         <option value="$PROJECT_DIR$/include/neoslam_sdk/queue.h" />
         <option value="$PROJECT_DIR$/include/neoslam_sdk/queue.hpp" />
-        <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/include/neo_bridge/CClientEpoll.h" />
         <option value="$PROJECT_DIR$/include/neo_bridge/CServerEpoll.h" />
         <option value="$PROJECT_DIR$/src/server/CPreServer.cpp" />
@@ -231,7 +243,6 @@
         <option value="$PROJECT_DIR$/src/server/TaskLidar.cpp" />
         <option value="$PROJECT_DIR$/include/neoslam_sdk/mode.h" />
         <option value="$PROJECT_DIR$/include/neo_bridge/packet.h" />
-        <option value="$PROJECT_DIR$/src/server/CBackServer.cpp" />
         <option value="$PROJECT_DIR$/include/neoslam_sdk/Type_UserData.h" />
         <option value="$PROJECT_DIR$/include/neoslam_sdk/Type_LoadMap.h" />
         <option value="$PROJECT_DIR$/src/server/TaskMap.cpp" />
@@ -246,15 +257,19 @@
         <option value="$PROJECT_DIR$/src/client_example.cpp" />
         <option value="$PROJECT_DIR$/src/server/CCommandExecutor.cpp" />
         <option value="$PROJECT_DIR$/include/neo_bridge/CCommandExecutor.h" />
-        <option value="$PROJECT_DIR$/src/server/RosMappingCtl.cpp" />
         <option value="$PROJECT_DIR$/src/server/TaskRobotStatus.cpp" />
         <option value="$PROJECT_DIR$/src/server/RosExploreCtl.cpp" />
         <option value="$PROJECT_DIR$/src/server/TaskNodeCtl.cpp" />
-        <option value="$PROJECT_DIR$/src/server/RosNavigationCtl.cpp" />
         <option value="$PROJECT_DIR$/include/neo_bridge/RosLocationCtl.h" />
         <option value="$PROJECT_DIR$/src/server/CRosNodeManager.cpp" />
         <option value="$PROJECT_DIR$/src/server/RosLocationCtl.cpp" />
+        <option value="$PROJECT_DIR$/CMakeLists.txt" />
+        <option value="$PROJECT_DIR$/src/server/CBackServer.cpp" />
+        <option value="$PROJECT_DIR$/include/neo_bridge/CConfig.h" />
+        <option value="$PROJECT_DIR$/src/server/CConfig.cpp" />
         <option value="$PROJECT_DIR$/src/server/CRosNode.cpp" />
+        <option value="$PROJECT_DIR$/src/server/RosMappingCtl.cpp" />
+        <option value="$PROJECT_DIR$/src/server/RosNavigationCtl.cpp" />
       </list>
     </option>
   </component>
@@ -991,20 +1006,21 @@
       <workItem from="1524274091765" duration="2759000" />
       <workItem from="1524280557314" duration="4214000" />
       <workItem from="1524552255262" duration="16694000" />
-      <workItem from="1524622897452" duration="3133000" />
+      <workItem from="1524622897452" duration="3592000" />
+      <workItem from="1524657403606" duration="11329000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="218770000" />
+    <option name="totallyTimeSpent" value="230558000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
+    <frame x="65" y="24" width="1855" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17789757" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32912722" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1041,62 +1057,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file:///usr/include/c++/5/bits/stl_map.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10605">
-          <caret line="707" column="6" selection-start-line="707" selection-start-column="6" selection-end-line="707" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/neoslam_sdk/Type_Lidar.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="3" selection-start-line="7" selection-start-column="3" selection-end-line="7" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/neoslam_sdk/Type_Pose.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="8" selection-start-line="9" selection-start-column="8" selection-end-line="9" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/TCPIP/CTcpServer.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/TCPIP/CTcpSocket.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/TCPIP/CUdpSocket.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/TCPIP/CSocket.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="5" selection-start-line="21" selection-start-column="5" selection-end-line="21" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/TaskCancelGoal.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="7" column="3" selection-start-line="7" selection-start-column="3" selection-end-line="7" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/neoslam_sdk/Type_CmdVel.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1108,13 +1068,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="381">
           <caret line="93" column="57" selection-start-line="93" selection-start-column="57" selection-end-line="93" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/include/neo_bridge/CRosNode.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -1160,21 +1113,6 @@
           <folding>
             <element signature="e#38#71#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-849">
-          <caret line="29" column="50" selection-start-line="29" selection-start-column="50" selection-end-line="29" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/common/CShareMem.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="109" column="16" selection-start-line="109" selection-start-column="16" selection-end-line="109" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1249,13 +1187,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/CBackServer.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="23" column="14" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/neo_bridge/CRosNodeManager.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -1291,13 +1222,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosNavigationCtl.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="38" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/neo_bridge/CCommandExecutor.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
@@ -1328,14 +1252,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/RosNavigationCtl.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="50" column="31" selection-start-line="50" selection-start-column="31" selection-end-line="50" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosLocation.h" />
     <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosLidarCtl.h">
       <provider selected="true" editor-type-id="text-editor">
@@ -1361,16 +1277,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/RosMappingCtl.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="47" selection-start-line="11" selection-start-column="47" selection-end-line="11" selection-end-column="47" />
-          <folding>
-            <element signature="e#39#76#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/server/RosExploreCtl.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
@@ -1379,19 +1285,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/CRosNodeManager.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="173" column="38" selection-start-line="173" selection-start-column="38" selection-end-line="173" selection-end-column="38" />
-          <folding>
-            <element signature="e#39#78#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/server/TaskMap.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
+        <state relative-caret-position="465">
           <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
           <folding />
         </state>
@@ -1405,11 +1301,154 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/include/neo_bridge/CStreamBase.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/neo_bridge/RosNavigationCtl.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="38" selection-start-line="8" selection-start-column="38" selection-end-line="8" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/common/CShareMem.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="78" column="16" selection-start-line="78" selection-start-column="16" selection-end-line="78" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/ros/kinetic/include/ros/node_handle.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="1671" column="7" selection-start-line="1671" selection-start-column="7" selection-end-line="1671" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/lua5.2/lauxlib.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="77" column="38" selection-start-line="77" selection-start-column="38" selection-end-line="77" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="63" column="11" selection-start-line="63" selection-start-column="11" selection-end-line="63" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/common/CThreadBase.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="18" selection-start-line="13" selection-start-column="18" selection-end-line="13" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="784">
+          <caret line="117" column="17" selection-start-line="117" selection-start-column="17" selection-end-line="117" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/lua5.2/lua.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="345" column="8" selection-start-line="345" selection-start-column="8" selection-end-line="345" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/neo_bridge/CConfig.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="36" column="22" selection-start-line="36" selection-start-column="22" selection-end-line="36" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/CBackServer.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="31" column="10" selection-start-line="31" selection-start-column="10" selection-end-line="31" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/include/neo_bridge/CRosNode.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="32" column="8" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
+          <folding>
+            <element signature="e#100#122#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/CRosNodeManager.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="889">
+          <caret line="173" column="38" selection-start-line="173" selection-start-column="38" selection-end-line="173" selection-end-column="38" />
+          <folding>
+            <element signature="e#39#78#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/CConfig.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="30" column="20" selection-start-line="30" selection-start-column="20" selection-end-line="30" selection-end-column="20" />
+          <folding>
+            <element signature="e#38#69#0" expanded="true" />
+            <element signature="e#107#123#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/server/CRosNode.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="454">
-          <caret line="144" column="6" selection-start-line="144" selection-start-column="6" selection-end-line="144" selection-end-column="6" />
-          <folding />
+        <state relative-caret-position="150">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding>
+            <element signature="e#39#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/RosMappingCtl.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="74" selection-start-line="15" selection-start-column="74" selection-end-line="15" selection-end-column="74" />
+          <folding>
+            <element signature="e#39#76#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/RosNavigationCtl.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="15" column="43" selection-start-line="15" selection-start-column="43" selection-end-line="15" selection-end-column="43" />
+          <folding>
+            <element signature="e#38#78#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

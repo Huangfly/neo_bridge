@@ -7,12 +7,17 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string>
+#include <neo_bridge/CConfig.h>
 
+using namespace Neo_Config;
 
 RosMappingCtl::RosMappingCtl():CommandExecutor("") {
     this->isRun = false;
-    this->cmd_ = "bash ~/.neoware/bashfile/mapping.sh";//"roslaunch micvision_mapping mapping_neo.launch";
-    this->cmd_kill_ = "bash ~/.neoware/bashfile/mapping_kill.sh";
+    Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
+
+
+    this->cmd_ = config_ptr->mappingDir_;//"roslaunch micvision_mapping mapping_neo.launch";
+    this->cmd_kill_ = config_ptr->mappingKillDir_;//"bash ~/.neoware/bashfile/mapping_kill.sh";
 }
 
 RosMappingCtl::~RosMappingCtl() {

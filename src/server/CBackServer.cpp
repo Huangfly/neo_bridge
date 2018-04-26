@@ -1,5 +1,8 @@
 #include "CBackServer.h"
 #include "CRosNodeManager.h"
+#include "CConfig.h"
+
+using namespace Neo_Config;
 
 extern CShareMem shm_bus;
 extern bool systerm_exit;
@@ -21,10 +24,17 @@ void CBackServer::Exec(int argc,char **argv)
 	P_HEAD head = {0};
 	int Len = 0;
 	int fd;
-	CRosNodeManager nodeManager;
-	nodeManager.Create();
+
+    printf("config file: %s\n",argv[1]);
+    Neo_Config::CConfig config;
+    config.LoadFille(argv[1]);
+
     CRosNode rosnode;
     rosnode.Create();
+
+	CRosNodeManager nodeManager;
+	nodeManager.Create();
+
     while(systerm_exit == false)
 	{
         //usleep(50000);

@@ -12,15 +12,24 @@ find_package(catkin REQUIRED COMPONENTS
 )
 find_package(Threads REQUIRED)
 
+find_package(Lua REQUIRED)
+
 catkin_package(
 
 )
 
+
+
 include_directories(
         include
         ${catkin_INCLUDE_DIRS}
+        ${LUA_INCLUDE_DIR}
         include/neo_bridge
 )
+
+
+message("   *** Lua include: ${LUA_INCLUDE_DIR}")
+message("   *** Lua lib: ${LUA_LIBRARIES}")
 #link_directories("/home/server/third/lib")
 
 #=================================================
@@ -48,9 +57,11 @@ target_link_libraries(tcpip common)
 #=================================================
 #    executable
 #=================================================
-add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosMappingCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosMappingCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/Type_CmdVel.h include/neo_bridge/TaskCmdVel.h src/server/TaskLidar.cpp include/neo_bridge/TaskLidar.h include/neoslam_sdk/Type_Lidar.h include/neo_bridge/Debug.h include/neoslam_sdk/Type_Pose.h include/neoslam_sdk/neo_map.hpp src/server/TaskLoadMap.cpp include/neo_bridge/TaskLoadMap.h include/neoslam_sdk/Type_LoadMap.h include/neoslam_sdk/Type_UserData.h src/server/RosLocationCtl.cpp include/neo_bridge/RosLocationCtl.h)
+add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosMappingCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosMappingCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/Type_CmdVel.h include/neo_bridge/TaskCmdVel.h src/server/TaskLidar.cpp include/neo_bridge/TaskLidar.h include/neoslam_sdk/Type_Lidar.h include/neo_bridge/Debug.h include/neoslam_sdk/Type_Pose.h include/neoslam_sdk/neo_map.hpp src/server/TaskLoadMap.cpp include/neo_bridge/TaskLoadMap.h include/neoslam_sdk/Type_LoadMap.h include/neoslam_sdk/Type_UserData.h src/server/RosLocationCtl.cpp include/neo_bridge/RosLocationCtl.h src/server/CConfig.cpp include/neo_bridge/CConfig.h)
 target_link_libraries(${PROJECT_NAME}_node
         ${catkin_LIBRARIES}
+        ${LUA_LIBRARIES}
+        -lm
         common
         tcpip
         )

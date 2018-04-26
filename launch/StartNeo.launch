@@ -1,0 +1,7 @@
+<launch>
+  <node name="neo_bridge_node" pkg="neo_bridge"
+      type="neo_bridge_node" args="$(find neo_bridge)/configuration_files/config.lua"
+      output="screen">
+  </node>
+</launch>
+

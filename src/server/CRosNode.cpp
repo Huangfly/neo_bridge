@@ -7,6 +7,9 @@
 #include "CRosNode.h"
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
+#include <neo_bridge/CConfig.h>
+
+using namespace Neo_Config;
 
 extern bool systerm_exit;
 extern CShareMem shm_bus;
@@ -25,13 +28,26 @@ CRosNode::CRosNode()
         :nh("~")
         ,nhp("~")
 {
-    sub_map_ = nh.subscribe("/map",0.01,&CRosNode::cbMap, this);
-    sub_scan_ = nh.subscribe("/scan",10,&CRosNode::cbScan,this);
+    std::string config_name;
+    if( !nh.getParam("config_lua", config_name) ){
+        Neo_Config::CConfig config;
+        //config.LoadFille(config_name.c_str());
+    }
+
+    Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
+
+    if( config_ptr == NULL ){
+        printf("error: no found config file.\n");
+        return;
+    }
+
+    sub_map_ = nh.subscribe(config_ptr->mapTopic_,0.01,&CRosNode::cbMap, this);
+    sub_scan_ = nh.subscribe(config_ptr->scanTopic_,10,&CRosNode::cbScan,this);
     //sub_odom_ = nh.subscribe("/odom",5,&CRosNode::cbOdom, this);
     sub_moveStatus_ = nh.subscribe("/move_base/status",5,&CRosNode::cbMoveStatus, this);
     pub_goal_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
     pub_cancelGoal_ = nh.advertise<actionlib_msgs::GoalID>("/move_base/cancel",1);
-    pub_cmdVel_ = nh.advertise<geometry_msgs::Twist>("/cmd_vel",10);
+    pub_cmdVel_ = nh.advertise<geometry_msgs::Twist>(config_ptr->cmdvelTopic_,10);
 
     tf_listener = new tf::TransformListener(nh);
     //m_pub_flag = {0};
@@ -44,9 +60,9 @@ void CRosNode::Run()
 {
     //tf::TransformListener tf_listener;
 
+    Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
 
-
-    while (ros::ok())
+    while (ros::ok() && config_ptr != NULL )
     {
         tf::StampedTransform transform_map_odom;
         tf::StampedTransform transform_map_laser;
@@ -54,7 +70,7 @@ void CRosNode::Run()
         if(st_pub_flag.isPub_Goal) {
             st_pub_flag.isPub_Goal = false;
             st_MoveGoal.header.stamp = ros::Time::now();
-            st_MoveGoal.header.frame_id = "map";
+            st_MoveGoal.header.frame_id = config_ptr->mapFrameId_;
             pub_goal_.publish(st_MoveGoal);
             printf("goal...\n");
         }
@@ -70,7 +86,7 @@ void CRosNode::Run()
             printf("Cancel Move.\n");
         }
         try {
-            tf_listener->lookupTransform("map","base_link",ros::Time(0.),transform_map_odom);
+            tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->robotFrameId_,ros::Time(0.),transform_map_odom);
             robot_status.x = transform_map_odom.getOrigin().getX();
             robot_status.y = transform_map_odom.getOrigin().getY();
             robot_status.z = transform_map_odom.getOrigin().getZ();
@@ -78,7 +94,7 @@ void CRosNode::Run()
             robot_status.Quaternion[1] = transform_map_odom.getRotation().getY();
             robot_status.Quaternion[2] = transform_map_odom.getRotation().getZ();
             robot_status.Quaternion[3] = transform_map_odom.getRotation().getW();
-            tf_listener->lookupTransform("map","base_laser_link",ros::Time(0.),transform_map_laser);
+            tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->scanFrameId_,ros::Time(0.),transform_map_laser);
             laser_pose.x = transform_map_laser.getOrigin().getX();
             laser_pose.y = transform_map_laser.getOrigin().getY();
             laser_pose.z = transform_map_laser.getOrigin().getZ();
