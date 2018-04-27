@@ -10,6 +10,7 @@
 #include <neo_bridge/TaskLidar.h>
 #include <neo_bridge/TaskLoadMap.h>
 #include <neoslam_sdk/mode.h>
+#include <neo_bridge/TaskGlobalPath.h>
 
 CUnpackTask::CUnpackTask(char *bus_buf, int Len, int fd, CThreadPool *busctl_pool)
 :CTask()
@@ -34,11 +35,11 @@ void CUnpackTask::  doAction()
 	//printf("pack id:%d  fd:%d\n",head.funcId,fd);
 	//DEBUG_LOG((unsigned char*)buf,Len);
 
-	if( !CBackServer::UserDatas.findKey(head.msg_code) ){
+	if( head.msg_code >= 0 && head.msg_code < 10 && !CBackServer::UserDatas.findKey(head.msg_code) ){
         printf("add user %d\n",head.msg_code);
         Neo_Type::UserData user(head.msg_code);
         CBackServer::UserDatas.set(head.msg_code, user);
-        printf("size:%d\n",CBackServer::UserDatas.size());
+        //printf("size:%d\n",CBackServer::UserDatas.size());
 	}
 
 	switch(head.funcId)
@@ -66,6 +67,10 @@ void CUnpackTask::  doAction()
 			break;
         case PACK_LOADMAP:
             busctl_pool->addTask( new CLoadMapTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(LOADMAP_PACKAGE_POP)) );
+			break;
+		case PACK_GLOBALPATH:
+			busctl_pool->addTask( new CGlobalPathTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(GLOBALPATH_PACKAGE_POP)) );
+			break;
 	default:
 		break;
 	}

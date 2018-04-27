@@ -64,6 +64,9 @@ bool CConfig::LoadFille(const char *filename) {
     if(!LoadString(L,"navigation_kill_shell_dir",paramer->navigationKillDir_))return false;
     //printf("map: %s\n",str.c_str());
 
+    LoadString(L,"map_save_dir",paramer->mapSaveDir_);
+    LoadString(L,"path_topic",paramer->pathTopic_);
+
     if(configParamer == NULL){
         configParamer = new ConfigParamer();
     }

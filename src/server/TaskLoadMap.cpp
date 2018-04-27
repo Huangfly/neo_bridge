@@ -8,6 +8,8 @@
 #include "CBackServer.h"
 #include "neoslam_sdk/mode.h"
 #include "tf2/LinearMath/Matrix3x3.h"
+#include "neo_bridge/CConfig.h"
+
 
 extern CShareMem shm_ack;
 
@@ -33,8 +35,13 @@ static bool SaveMap(int ID){
                    map->info.width,
                    map->info.height,
                    map->info.resolution);
-
-            std::string mapname_ = "/home/huang/.neoware/maps/navigation";
+            Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
+            std::string mapname_;
+            if(config_ptr != NULL && config_ptr->mapSaveDir_ != ""){
+                mapname_ = config_ptr->mapSaveDir_;
+            }else{
+                mapname_ = "navigation";
+            }
             std::string mapdatafile = mapname_ + ".pgm";
             printf("Writing map occupancy data to %s\n", mapdatafile.c_str());
             FILE *out = fopen(mapdatafile.c_str(), "w");

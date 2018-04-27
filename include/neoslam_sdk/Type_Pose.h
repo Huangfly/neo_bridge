@@ -6,6 +6,12 @@
 #define NEO_BRIDGE_TYPE_POSE_H
 
 namespace Neo_Type{
+
+    typedef struct {
+        float x;
+        float y;
+    }POINT;
+
     typedef struct {
        float x;
        float y;

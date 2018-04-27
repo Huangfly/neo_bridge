@@ -19,10 +19,15 @@ static actionlib_msgs::GoalID st_CancelGoal;
 static ROS_PUB_FLAG st_pub_flag;
 nav_msgs::OccupancyGrid CRosNode::map_base_ = nav_msgs::OccupancyGrid();
 sensor_msgs::LaserScan CRosNode::scan_ = sensor_msgs::LaserScan();
+nav_msgs::Path CRosNode::path_ = nav_msgs::Path();
 STATUS_PACKAGE_ACK CRosNode::robot_status = {0};
 STATUS_PACKAGE_ACK CRosNode::laser_pose = {0};
+bool CRosNode::isAction = false;
 
 ros::Publisher  pub_cmdVel_;
+
+pthread_mutex_t *mutex_update_Path = NULL;
+
 
 CRosNode::CRosNode()
         :nh("~")
@@ -43,10 +48,12 @@ CRosNode::CRosNode()
 
     sub_map_ = nh.subscribe(config_ptr->mapTopic_,0.01,&CRosNode::cbMap, this);
     sub_scan_ = nh.subscribe(config_ptr->scanTopic_,10,&CRosNode::cbScan,this);
-    //sub_odom_ = nh.subscribe("/odom",5,&CRosNode::cbOdom, this);
     sub_moveStatus_ = nh.subscribe("/move_base/status",5,&CRosNode::cbMoveStatus, this);
+    sub_path_ = nh.subscribe(config_ptr->pathTopic_,10,&CRosNode::cbPath, this);
+
     pub_goal_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
     pub_cancelGoal_ = nh.advertise<actionlib_msgs::GoalID>("/move_base/cancel",1);
+
     pub_cmdVel_ = nh.advertise<geometry_msgs::Twist>(config_ptr->cmdvelTopic_,10);
 
     tf_listener = new tf::TransformListener(nh);
@@ -54,6 +61,11 @@ CRosNode::CRosNode()
     st_pub_flag.isPub_Goal = false;
     st_pub_flag.isPub_InitPose = false;
     st_pub_flag.isPub_CancelGoal = false;
+
+    if(mutex_update_Path == NULL){
+        mutex_update_Path = new pthread_mutex_t;
+        pthread_mutex_init(mutex_update_Path,NULL);
+    }
 }
 
 void CRosNode::Run()
@@ -87,6 +99,19 @@ void CRosNode::Run()
         }
         try {
             tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->robotFrameId_,ros::Time(0.),transform_map_odom);
+
+            tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->scanFrameId_,ros::Time(0.),transform_map_laser);
+
+            //printf("----------------------- tf\n");
+            isAction = true;
+            //printf("x:%f\ny:%f\n",robot_status.x,robot_status.y);
+            //printf("x:%f\ny:%f\nz:%f\nw:%f\n",robot_status.Quaternion[0] ,robot_status.Quaternion[1] ,robot_status.Quaternion[2] ,robot_status.Quaternion[3]);
+            //tf_listener.waitForTransform("map","odom",ros::Time(0.1));
+        }catch (tf::TransformException &ex){
+            //printf("error tf\n");
+            isAction = false;
+        }
+        if(isAction){
             robot_status.x = transform_map_odom.getOrigin().getX();
             robot_status.y = transform_map_odom.getOrigin().getY();
             robot_status.z = transform_map_odom.getOrigin().getZ();
@@ -94,7 +119,7 @@ void CRosNode::Run()
             robot_status.Quaternion[1] = transform_map_odom.getRotation().getY();
             robot_status.Quaternion[2] = transform_map_odom.getRotation().getZ();
             robot_status.Quaternion[3] = transform_map_odom.getRotation().getW();
-            tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->scanFrameId_,ros::Time(0.),transform_map_laser);
+
             laser_pose.x = transform_map_laser.getOrigin().getX();
             laser_pose.y = transform_map_laser.getOrigin().getY();
             laser_pose.z = transform_map_laser.getOrigin().getZ();
@@ -102,17 +127,7 @@ void CRosNode::Run()
             laser_pose.Quaternion[1] = transform_map_laser.getRotation().getY();
             laser_pose.Quaternion[2] = transform_map_laser.getRotation().getZ();
             laser_pose.Quaternion[3] = transform_map_laser.getRotation().getW();
-
-            //printf("x:%f\ny:%f\n",robot_status.x,robot_status.y);
-            //printf("x:%f\ny:%f\nz:%f\nw:%f\n",robot_status.Quaternion[0] ,robot_status.Quaternion[1] ,robot_status.Quaternion[2] ,robot_status.Quaternion[3]);
-            //tf_listener.waitForTransform("map","odom",ros::Time(0.1));
-        }catch (tf::TransformException &ex){
-            //ROS_ERROR("%s",ex.what());
-            //ros::spinOnce();
-            //usleep(10000);
-            //continue;
         }
-
         ros::spinOnce();
         usleep(10000);
     }
@@ -179,8 +194,31 @@ void CRosNode::cbMoveStatus(const actionlib_msgs::GoalStatusArray &msg) {
 }
 
 void CRosNode::cbScan(const sensor_msgs::LaserScan &msg) {
+    //pthread_mutex_lock(mutex_update_Path);
     this->scan_ = msg;
+    //pthread_mutex_lock(mutex_update_Path);
     //printf("scan:%d\n",this->scan_.ranges.size());
 }
+
+
+
+void CRosNode::cbPath(const nav_msgs::Path &msg){
+    pthread_mutex_lock(mutex_update_Path);
+    this->path_ = msg;
+    pthread_mutex_unlock(mutex_update_Path);
+    //printf("get path.%d\n",(unsigned int)this->path_.poses.size());
+}
+
+void CRosNode::GetGlobalPath(nav_msgs::Path &out){
+    pthread_mutex_lock(mutex_update_Path);
+    out = CRosNode::path_;
+    pthread_mutex_unlock(mutex_update_Path);
+}
+
+bool CRosNode::IsAction(){
+    return CRosNode::isAction;
+}
+
+
 
 #endif

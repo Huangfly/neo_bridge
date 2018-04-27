@@ -8,6 +8,7 @@
 #include "Type_Pose.h"
 #include <sensor_msgs/LaserScan.h>
 #include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/Path.h>
 
 namespace Neo_Type{
     class UserData{
@@ -36,6 +37,11 @@ namespace Neo_Type{
 
         unsigned long MapDatas_SerialNum;
         nav_msgs::OccupancyGrid MapDatas;
+
+
+        unsigned long GlobalPaths_SerialNum;
+        nav_msgs::Path GlobalPaths;
+
     };
 }
 

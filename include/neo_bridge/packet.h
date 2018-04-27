@@ -24,6 +24,7 @@
 #define PACK_CMDVEL     8 //
 #define PACK_LIDAR		9 //
 #define PACK_LOADMAP    10//
+#define PACK_GLOBALPATH		11//
 
 //
 typedef struct packet_head 

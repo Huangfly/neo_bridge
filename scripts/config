@@ -1,10 +1,13 @@
 #!/bin/bash
 
 echo "neo_bridge create work dir."
-mkdir -p ~/neoware/log
-mkdir -p ~/neoware/maps
-mkdir -p ~/neoware/bashfile
+sudo mkdir -p ~/.neoware/log
+sudo mkdir -p ~/.neoware/maps
+sudo mkdir -p ~/.neoware/bash
 
-cp mapping.sh mapping_kill.sh navigation.sh navigation_kill.sh ~/neoware/bashfile/
+sudo cp mapping.sh mapping_kill.sh navigation.sh navigation_kill.sh ~/.neoware/bash/
+
+cd ~/.neoware/bash/
+sudo chmod 777 *
 
 echo "install end."

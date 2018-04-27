@@ -24,6 +24,9 @@ namespace Neo_Config {
 
         std::string navigationDir_;
         std::string navigationKillDir_;
+
+        std::string mapSaveDir_;
+        std::string pathTopic_;
     };
 
     ConfigParamer* GetConfigParamer();
