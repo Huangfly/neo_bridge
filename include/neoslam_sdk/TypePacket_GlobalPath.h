@@ -8,7 +8,7 @@
 #include "Type_Pose.h"
 #define PATH_MAX_SIZE 50
 
-namespace Neo_Type {
+namespace Neo_Packet {
     typedef struct {
         unsigned int serial_num;
     } GLOBALPATH_PACKAGE_POP;

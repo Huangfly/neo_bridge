@@ -27,6 +27,10 @@ namespace Neo_Config {
 
         std::string mapSaveDir_;
         std::string pathTopic_;
+
+        bool isAutoIP;
+        std::string ip_;
+        char DebugMode;
     };
 
     ConfigParamer* GetConfigParamer();

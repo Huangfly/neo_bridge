@@ -23,7 +23,7 @@ namespace Neo_Type{
             this->id = _copy.id;
             ScanDatas_SerialNum = 0;
             MapDatas_SerialNum = 0;
-            printf("add user ID:%d\n",id);
+            //printf("add user ID:%d\n",id);
         }
         ~UserData(){}
         Neo_Type::POSE m_RobotPose;

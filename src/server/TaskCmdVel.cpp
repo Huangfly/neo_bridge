@@ -4,14 +4,14 @@
 
 #include <neo_bridge/TaskCmdVel.h>
 #include <neo_bridge/CRosNode.h>
-#include <neoslam_sdk/Type_CmdVel.h>
+#include <neoslam_sdk/TypePacket_CmdVel.h>
+#include <neo_bridge/CBackServer.h>
 
-extern CShareMem shm_ack;
-
-CCmdVelTask::CCmdVelTask(int fd, P_HEAD *bus_head, char *buf, int Len) {
-    memcpy(&this->head,bus_head,sizeof(P_HEAD));
-    memcpy(&this->packet_body,buf,sizeof(CMDVEL_PACKAGE_POP));
+CCmdVelTask::CCmdVelTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len) {
+    memcpy(&this->head,bus_head,sizeof(Neo_Packet::HEAD));
+    memcpy(&this->packet_body,buf,Len);
     this->fd = fd;
+    this->shm_ack = CBackServer::GetAckShareMemery();
 }
 
 CCmdVelTask::~CCmdVelTask() {
@@ -20,13 +20,13 @@ CCmdVelTask::~CCmdVelTask() {
 
 void CCmdVelTask::doAction() {
     CPacketStream packet;
-    CMDVEL_PACKAGE_ACK ack;
+    Neo_Packet::CMDVEL_PACKAGE_ACK ack;
     char ack_buf[60] = {0};
     int Size = 0;
     ack.ack = 1;
     printf("x = %f,y = %f,z = %f\n",packet_body.x,packet_body.y,packet_body.z);
     CRosNode::PopCmdVel(packet_body.x,packet_body.y,packet_body.z);
-    packet.Packet((unsigned char *)ack_buf, &Size, PACK_HEARD, &ack, sizeof(ack), head.trans_id, head.msg_code);
+    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &ack, sizeof(ack), head.ref, head.device_id);
 
-    shm_ack.Write((char*)ack_buf, Size, fd);
+    shm_ack->Write((char*)ack_buf, Size, fd);
 }

@@ -15,7 +15,7 @@ public:
     CommandExecutor(const std::string& cmd);
     virtual ~CommandExecutor();
     virtual bool Done() = 0;
-    virtual int ReturnValue() = 0;
+    virtual bool isRunning() = 0;
     virtual bool Kill() = 0;
 protected:
     std::string cmd_;

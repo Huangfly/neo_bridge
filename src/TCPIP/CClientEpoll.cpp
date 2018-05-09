@@ -1,10 +1,9 @@
 #include "CClientEpoll.h"
 #include "CUnpackTask.h"
 #include "CServerEpoll.h"
-
-extern map<int,int> user_list;
-extern map<int,int> connect_list;
-extern CShareMem shm_bus;
+#include "CUnDataPackTask.h"
+//extern map<int,int> user_list;
+//extern map<int,int> connect_list;
 extern int rcv_Count;
 extern int connect_Count;
 extern int user_Count;
@@ -33,11 +32,9 @@ void CClientEpoll::onEvent()
 	int i = 0;
 	char acBuf[1024] = {0};
 
-	//printf("read\n");
 	for (i = 0; i<m_result; i++)
 	{
 		nRead = read(m_retEvents[i].data.fd, acBuf, 1024);
-        //printf("read %d %d.\n",nRead,m_retEvents[i].events);
 		ModEvent(m_retEvents[i].data.fd,EPOLLIN | EPOLLET);
 		if (nRead <= 0)
 		{
@@ -50,11 +47,9 @@ void CClientEpoll::onEvent()
 	}
 }
 
-//ͻ˵ļͻ˶ϿӺĴ
 void CClientEpoll::onQuit(char *buf, int fd, int nRead)
 {
-	//
-	if (CServerEpoll::_connect_fds_count.erase(fd))
+	if (CServerEpoll::fds.erase(fd))
 	{
 		if(!DelEvent(fd, EPOLLOUT)){
 			printf("DelEvent fail.\n");
@@ -70,118 +65,21 @@ void CClientEpoll::onQuit(char *buf, int fd, int nRead)
 
 }
 
-//ͻ˵ļȡİڴ˴
 void CClientEpoll::onData(char *buf, int fd, int nRead)
 {
 	int Len = 0;
 	int pos = 0;
-	int funcId = 0;
+	int function_id = 0;
 
-	//printf("onData.%d\n",fd);
-	//൱ڼʼmapֵ
-	map<int,int>::iterator it;
-	it = user_list.find(fd);
-	if (it != user_list.end())
-	{
-		it->second = 5;
+	if(CServerEpoll::fds.findKey(fd)){
+		CServerEpoll::fds.set(fd,5);
 	}
 
-	it = connect_list.find(fd);
-	if (it != connect_list.end())
-	{
-		it->second = CLIENTEPOLL_TIMEOUT;
-	}
 	m_BusPool->addTask(new CUnDataPackTask(buf, nRead, fd, m_BusPool));
 }
 
 int* CClientEpoll::GetnConnect()
 {	
-	return &m_nConnect;
-}
-
-//============================================================================
-//
-//  CBusTask
-//
-//============================================================================
-CBusTask::CBusTask(char *buf, int fd, int Len)
-:CTask()
-{
-    this->buf = new char[Len];
-    memcpy(this->buf, buf, Len);
-    this->Len = Len;
-	this->fd = fd;
-}
-
-CBusTask::~CBusTask()
-{
-	delete []buf;
-}
-
-void CBusTask::doAction()
-{
-	shm_bus.Write(buf, Len, fd);
-}
-
-//============================================================================
-//
-//  CUnDataPackTask
-//
-//============================================================================
-CUnDataPackTask::CUnDataPackTask(char *bus_buf, int Len, int fd, CThreadPool *busctl_pool)
-:CTask()
-{
-	this->m_BusPool = busctl_pool;
-	this->buf = new char[Len];
-	memcpy(this->buf, bus_buf, Len);
-	this->nRead = Len;
-	this->fd = fd;
-}
-
-CUnDataPackTask::~CUnDataPackTask()
-{
-	delete []buf;
-}
-
-void CUnDataPackTask::doAction()
-{
-	P_HEAD head = {0};
-	char head_str[2] = {HEAD_CHR, HEAD_CHR};
-	char end_str[2] = {END_CHR, END_CHR};
-	
-	for (int i = 0; i < nRead; i++)
-	{
-        if(memcmp(buf + i, head_str, HEAD_LEN) == 0)
-		{
-			//ȡheadȡsize
-            memcpy(&head, buf + i + HEAD_LEN, sizeof(P_HEAD));
-			//printf("%d %d %d %d\n",head.funcId,head.size,head.msg_code,head.trans_id);
-            //DEBUG_LOG((unsigned char*)(buf+i),20);
-            if (head.size > nRead - i)
-			{
-				continue;
-			}
-            //DEBUG_LOG((unsigned char*)(buf+i),25);
-			//ƫsizeжǷаβ
-            if (memcmp(buf + i + head.size + HEAD_LEN + 1, end_str, HEAD_LEN) == 0)//ȡİ
-			{
-				//printf("receive package.\n");
-				//if(head.funcId == PACK_HEARD) printf("===%d\n",*(buf+i+HEAD_LEN+sizeof(head)));
-				//m_BusPool->addTask(new CUnpackTask(buf, head.size, fd, m_BusPool));
-				m_BusPool->addTask(new CBusTask(buf + i + HEAD_LEN, fd, head.size));
-				i += (head.size - 1);
-
-				rcv_Count++;				
-				if (*(buf + i + 1) != HEAD_CHR)
-				{
-					return;
-				}
-				continue;
-			}
-			else//
-			{
-				continue;
-			}
-		}
-	}
+	//return &m_nConnect;
+	return 0;
 }

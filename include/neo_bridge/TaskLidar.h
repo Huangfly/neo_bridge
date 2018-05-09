@@ -8,23 +8,21 @@
 #include "CThreadPool.h"
 #include "CShareMem.h"
 #include "packet.h"
-#include "config.h"
-#include <neoslam_sdk/Type_Lidar.h>
+#include <neoslam_sdk/TypePacket_LidarDatas.h>
 #include <vector>
-
-using namespace Neo_Type;
+#include <neo_bridge/CDebug.h>
 
 class CLidarTask:public CTask
 {
 private:
 
-    packet_head head;
-    Neo_Type::LIDAR_PACKAGE_POP package_recv;
-
+    Neo_Packet::HEAD head;
+    Neo_Packet::LIDAR_PACKAGE_POP package_recv;
+    CShareMem *shm_ack;
     int fd;
 public:
 
-    CLidarTask(int fd, P_HEAD *bus_head, char *buf, int Len);
+    CLidarTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len);
     ~CLidarTask();
     void doAction();
     void pushScan( float* rangs, std::vector<float> vec, int inset_num, int size );

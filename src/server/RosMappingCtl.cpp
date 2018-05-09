@@ -25,7 +25,7 @@ RosMappingCtl::~RosMappingCtl() {
 
 bool RosMappingCtl::Done() {
     if(isRun)return true;
-    if( CRosNode::IsAction() ){
+    if(!CRosNode::waitForUnAction()) {
         isRun = true;
         return true;
     }
@@ -33,15 +33,7 @@ bool RosMappingCtl::Done() {
     this->pid = CmdProcessOpen(this->cmd_.c_str(),NULL);
     printf("success %d\n",this->pid);
 
-    int count = 100;
-    while(count > 0){
-        count--;
-        if(CRosNode::IsAction()){
-            break;
-        }
-        usleep(50000);
-    }
-    if(count == 0){
+    if(!CRosNode::waitForAction()){
         return false;
     }
 
@@ -49,27 +41,19 @@ bool RosMappingCtl::Done() {
     return true;
 }
 
-int RosMappingCtl::ReturnValue() {
-    return 1;
+bool RosMappingCtl::isRunning() {
+    return isRun;
 }
 
 bool RosMappingCtl::Kill() {
     if(!isRun)return true;
-    if(!CRosNode::IsAction()){
+    if(!CRosNode::waitForAction()) {
         isRun = false;
         return true;
     }
     this->pid = CmdProcessOpen(this->cmd_kill_.c_str(),NULL);
 
-    int count = 100;
-    while(count > 0){
-        count--;
-        if(!CRosNode::IsAction()){
-            break;
-        }
-        usleep(50000);
-    }
-    if(count == 0){
+    if(!CRosNode::waitForUnAction()){
         return false;
     }
 

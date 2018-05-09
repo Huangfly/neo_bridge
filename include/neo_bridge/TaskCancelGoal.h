@@ -8,31 +8,20 @@
 #include "CThreadPool.h"
 #include "CShareMem.h"
 #include "packet.h"
-#include "config.h"
+#include <neoslam_sdk/TypePacket_CancelGoal.h>
+#include <neo_bridge/CDebug.h>
 
-typedef struct {
-    char isAck;
-}CANCELGOAL_PACKAGE_POP;
-
-typedef struct {
-    char ack;
-}CANCELGOAL_PACKAGE_ACK;
 
 class CCancelGoalTask:public CTask
 {
 private:
-
-    packet_head head;
-
+    Neo_Packet::HEAD head;
     int fd;
+    CShareMem *shm_ack;
 public:
-
-    CCancelGoalTask(int fd, P_HEAD *bus_head, char *buf, int Len);
+    CCancelGoalTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len);
     ~CCancelGoalTask();
     void doAction();
-
-
-
 };
 
 #endif //NEO_BRIDGE_TASKCANCELGOAL_H

@@ -8,20 +8,20 @@
 #include "CThreadPool.h"
 #include "CShareMem.h"
 #include "packet.h"
-#include "config.h"
-#include <neoslam_sdk/Type_CmdVel.h>
-
+#include <neoslam_sdk/TypePacket_CmdVel.h>
+#include <neo_bridge/CDebug.h>
 
 class CCmdVelTask:public CTask
 {
 private:
 
-    packet_head head;
-    CMDVEL_PACKAGE_POP packet_body;
+    Neo_Packet::HEAD head;
+    Neo_Packet::CMDVEL_PACKAGE_POP packet_body;
     int fd;
+    CShareMem *shm_ack;
 public:
 
-    CCmdVelTask(int fd, P_HEAD *bus_head, char *buf, int Len);
+    CCmdVelTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len);
     ~CCmdVelTask();
     void doAction();
 

@@ -19,7 +19,6 @@ int killProcess(pid_t pid)
 
 int killProcessRosLaunch(char *cmd_name)
 {
-
     char popbuffer[120] = {0};
     sprintf(popbuffer,"kill -2 $(ps -au | grep \"%s\"|grep \"/usr/bin/python\"|awk '{print $2}')",cmd_name);
     return system(popbuffer);
@@ -41,7 +40,7 @@ int CmdProcessOpen(const char *cmdstring, const char *outfilename)
     }
     signal(SIGCHLD, SIG_IGN);
 
-    printf("%s\n",new_cmd);
+    //printf("%s\n",new_cmd);
     if ( (pid = fork()) < 0)
         return -1;   /* errno set by fork() */
     else if (pid == 0) {                            /* child */

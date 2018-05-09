@@ -1,16 +1,16 @@
 #include "CUnpackTask.h"
-#include "map.h"
+#include "TaskMap.h"
 #include "CBackServer.h"
 #include "CRosNode.h"
-#include "robot_status.h"
-#include "goal.h"
+#include "TaskRobotStatus.h"
+#include "TaskGoal.h"
 #include "TaskCancelGoal.h"
-#include "TaskNodeCtl.h"
+#include "TaskRosControl.h"
 #include <neo_bridge/TaskCmdVel.h>
 #include <neo_bridge/TaskLidar.h>
 #include <neo_bridge/TaskLoadMap.h>
-#include <neoslam_sdk/mode.h>
 #include <neo_bridge/TaskGlobalPath.h>
+#include <neo_bridge/packet.h>
 
 CUnpackTask::CUnpackTask(char *bus_buf, int Len, int fd, CThreadPool *busctl_pool)
 :CTask()
@@ -29,49 +29,80 @@ CUnpackTask::~CUnpackTask()
 
 void CUnpackTask::  doAction()
 {
-	P_HEAD head = {0};
+	Neo_Packet::HEAD head = {0};
 
-	memcpy(&head, buf, sizeof(P_HEAD));
-	//printf("pack id:%d  fd:%d\n",head.funcId,fd);
+	memcpy(&head, buf, sizeof(Neo_Packet::HEAD));
 	//DEBUG_LOG((unsigned char*)buf,Len);
 
-	if( head.msg_code >= 0 && head.msg_code < 10 && !CBackServer::UserDatas.findKey(head.msg_code) ){
-        printf("add user %d\n",head.msg_code);
-        Neo_Type::UserData user(head.msg_code);
-        CBackServer::UserDatas.set(head.msg_code, user);
+	if( head.device_id >= 0 && head.device_id < 10 && !CBackServer::UserDatas.findKey(head.device_id) ){
+        NeoDebug("add user %d\n",head.device_id);
+        Neo_Type::UserData user(head.device_id);
+        CBackServer::UserDatas.inset(std::pair<int,Neo_Type::UserData>(head.device_id, user));
         //printf("size:%d\n",CBackServer::UserDatas.size());
 	}
-
-	switch(head.funcId)
+	Neo_Packet::PacketType type = (Neo_Packet::PacketType) head.function_id;
+	switch(type)
+	{
+		case Neo_Packet::PacketType::ROBOTSTATUS :
+			busctl_pool->addTask( new CRobotStatusTask(fd,&head,(buf+ sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::STATUS_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::MAPDATAS :
+			busctl_pool->addTask( new CMapTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::MAP_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::SENDGOAL :
+			busctl_pool->addTask( new CGoalTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::GOAL_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::CANCELGOAL :
+			busctl_pool->addTask( new CCancelGoalTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::CANCELGOAL_PACKAGE_ACK)) );
+			break;
+		case Neo_Packet::PacketType::ROSCONTROL :
+			busctl_pool->addTask( new CRosControlTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::NODECTL_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::CMDVEL :
+			busctl_pool->addTask( new CCmdVelTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::CMDVEL_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::LIDARDATAS :
+			busctl_pool->addTask( new CLidarTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::LIDAR_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::MAPUPLOAD :
+			busctl_pool->addTask( new CLoadMapTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::LOADMAP_PACKAGE_POP)) );
+			break;
+		case Neo_Packet::PacketType::GLOBALPLAN :
+			busctl_pool->addTask( new CGlobalPathTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::GLOBALPATH_PACKAGE_POP)) );
+			break;
+		default:
+			break;
+	}
+/*	switch(head.function_id)
 	{
 		case PACK_HEARD:
-			busctl_pool->addTask( new CRobotStatusTask(fd,&head,(buf+ sizeof(P_HEAD)), sizeof(STATUS_PACKAGE_POP)) );
+			busctl_pool->addTask( new CRobotStatusTask(fd,&head,(buf+ sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::STATUS_PACKAGE_POP)) );
 			break;
         case PACK_MAP:
-            busctl_pool->addTask( new CMapTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(MAP_PACKAGE_POP)) );
+            busctl_pool->addTask( new CMapTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::MAP_PACKAGE_POP)) );
             break;
 		case PACK_GOAL:
-			busctl_pool->addTask( new CGoalTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(GOAL_PACKAGE_POP)) );
+			busctl_pool->addTask( new CGoalTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::GOAL_PACKAGE_POP)) );
 			break;
 		case PACK_CANCELGOAL:
-			busctl_pool->addTask( new CCancelGoalTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(CANCELGOAL_PACKAGE_POP)) );
+			busctl_pool->addTask( new CCancelGoalTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::CANCELGOAL_PACKAGE_ACK)) );
 			break;
         case PACK_NODECTL:
-            busctl_pool->addTask( new CNodeCtlTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(NODECTL_PACKAGE_POP)) );
+            busctl_pool->addTask( new CRosControlTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::NODECTL_PACKAGE_POP)) );
             break;
 		case PACK_CMDVEL:
-			busctl_pool->addTask( new CCmdVelTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(CMDVEL_PACKAGE_POP)) );
+			busctl_pool->addTask( new CCmdVelTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::CMDVEL_PACKAGE_POP)) );
 			break;
 		case PACK_LIDAR:
-			busctl_pool->addTask( new CLidarTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(LIDAR_PACKAGE_POP)) );
+			busctl_pool->addTask( new CLidarTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::LIDAR_PACKAGE_POP)) );
 			break;
         case PACK_LOADMAP:
-            busctl_pool->addTask( new CLoadMapTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(LOADMAP_PACKAGE_POP)) );
+            busctl_pool->addTask( new CLoadMapTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::LOADMAP_PACKAGE_POP)) );
 			break;
 		case PACK_GLOBALPATH:
-			busctl_pool->addTask( new CGlobalPathTask(fd,&head,(buf+sizeof(P_HEAD)), sizeof(GLOBALPATH_PACKAGE_POP)) );
+			busctl_pool->addTask( new CGlobalPathTask(fd,&head,(buf+sizeof(Neo_Packet::HEAD)), sizeof(Neo_Packet::GLOBALPATH_PACKAGE_POP)) );
 			break;
 	default:
 		break;
-	}
+	}*/
 }

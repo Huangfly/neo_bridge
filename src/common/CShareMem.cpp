@@ -1,18 +1,15 @@
 #include "CShareMem.h"
 
-//źĹ캯
 CSem::CSem(int val, key_t sem_key)
 {
 	this->val = val;
 	this->sem_key = sem_key;
 }
-//ź
 CSem::~CSem()
 {
 	union semun value = {0};
 	semctl(sem_id, 0, IPC_RMID, value);
 }
-//źĳʼ
 void CSem::Create()
 {
 	sem_id = semget(sem_key,0,0);
@@ -26,7 +23,6 @@ void CSem::Create()
 	value.val = val;
 	semctl(sem_id, 0, SETVAL, value);
 }
-//źPV
 void CSem::SemOp(int op)
 {
 	struct sembuf sem_buf = {0};
@@ -60,7 +56,6 @@ CShareMem::~CShareMem()
 
 void CShareMem::Create()
 {
-	//ٹڴ
 	shm_id = shmget(shm_key, 0, 0);
 	if (shm_id >= 0)
 	{
@@ -69,13 +64,10 @@ void CShareMem::Create()
 	shm_id = shmget(shm_key, nBlockCount * BlockSize, IPC_CREAT | 0766);
 	pBase = (char*)shmat(shm_id, NULL, 0);
 	///////////////////////////
-	//SYSTEM Vź,̼ͬ
-	//ʼź
 	empty_sem->Create();
 	full_sem->Create();
 }
 
-//дݿ
 void CShareMem::Write(char *buf, int Len, int fd)
 {
 	if (Len > BlockSize)
@@ -85,34 +77,26 @@ void CShareMem::Write(char *buf, int Len, int fd)
 		exit(1);
 	}
 
-	//ȴԴ,P-1
 	empty_sem->SemOp(-1);
 
-	//ȡеݿλã0 -1д 1Դ
 	int pos = 0;
 	while (pos < (nBlockCount * BlockSize) && *(pBase + pos) != 0)//ҵݿ
 	{
 		pos += BlockSize;
 	}
-	*(pBase + pos) = -1;//־ݿ
-	//дݿ
+	*(pBase + pos) = -1;
 	memcpy(pBase + pos + 1, &fd, sizeof(int));
 	memcpy(pBase + pos + 1 + sizeof(int), &Len, sizeof(int));
 	memcpy(pBase + pos + 1 + sizeof(int) * 2, buf, Len);
 
-	//Դд
 	*(pBase + pos) = 1;
-	//ɶԴ+1
 	full_sem->SemOp(+1);
 }
 
-//ȡԴݿ
-void CShareMem::Read(char *buf, int *Len, int *fd, P_HEAD *head)
+void CShareMem::Read(char *buf, int *Len, int *fd, Neo_Packet::HEAD *head)
 {
 	int val;
-	//ȴɶԴ-1
 	full_sem->SemOp(-1);
-	//Դݿ
 	int pos = 0;
 	while (pos < (nBlockCount * BlockSize) && *(pBase + pos) != 1)
 	{
@@ -122,17 +106,14 @@ void CShareMem::Read(char *buf, int *Len, int *fd, P_HEAD *head)
 	{
 		return;
 	}
-	//ȡ
 	memcpy(fd, pBase + pos + 1, sizeof(int));
 	memcpy(Len, pBase + pos + sizeof(int) + 1, sizeof(int));
 	memcpy(buf, pBase + pos + sizeof(int) * 2 + 1, *Len);
 	if (head != NULL)
 	{
-        memcpy(head, buf + HEAD_LEN, sizeof(P_HEAD));
+        memcpy(head, buf + HEADER_LEN, sizeof(Neo_Packet::HEAD));
 	}
 	
-	//ȡ,ݿ
 	memset(pBase + pos, 0, sizeof(int) * 2 + 1 + *Len);
-	//ͷһԴ,V +1
 	empty_sem->SemOp(+1);
 }

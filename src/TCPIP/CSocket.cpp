@@ -1,6 +1,5 @@
 #include "CSocket.h"
 
-//캯׽ֵͻеַȥ
 CSocket::CSocket(bool ifTCP, int in_family, int protocol)
 {
 	type = ifTCP;
@@ -9,14 +8,13 @@ CSocket::CSocket(bool ifTCP, int in_family, int protocol)
 	m_fd = -1;
 }
 
-//
 CSocket::~CSocket()
 {
 }
 
 bool CSocket::Create()
 {
-	if (type)//true TCP׽
+	if (type)
 	{
 		m_fd = socket(in_family, SOCK_STREAM, protocol);
 	}

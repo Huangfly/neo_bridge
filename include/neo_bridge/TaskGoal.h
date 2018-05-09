@@ -9,34 +9,25 @@
 #include "CThreadPool.h"
 #include "CShareMem.h"
 #include "packet.h"
-#include "config.h"
 #include <geometry_msgs/PoseStamped.h>
-
-typedef struct {
-    float x;
-    float y;
-    float z;
-    float Quaternion[4];
-}GOAL_PACKAGE_POP;
-
-typedef struct {
-    char isSuccess;
-}GOAL_PACKAGE_ACK;
+#include <neoslam_sdk/TypePacket_SendGoal.h>
+#include <neo_bridge/CDebug.h>
 
 class CGoalTask:public CTask
 {
 private:
 
-    packet_head head;
-
+    Neo_Packet::HEAD head;
+    Neo_Packet::GOAL_PACKAGE_POP ack_pack;
     int fd;
+    CShareMem *shm_ack;
 public:
 
-    CGoalTask(int fd, P_HEAD *bus_head, char *buf, int Len);
+    CGoalTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len);
     ~CGoalTask();
     void doAction();
 
-    GOAL_PACKAGE_POP ack_pack;
+
 
 };
 #endif //NEO_BRIDGE_GOAL_H

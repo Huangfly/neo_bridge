@@ -7,17 +7,18 @@
 
 
 #include <neo_bridge/CCommandExecutor.h>
+#include <neo_bridge/CDebug.h>
 
-class RosLocationCtl:public CommandExecutor
+class RosLocalizationCtl:public CommandExecutor
 {
 private:
     bool isRun;
 public:
-    RosLocationCtl();
-    ~RosLocationCtl();
+    RosLocalizationCtl();
+    ~RosLocalizationCtl();
 
     bool Done();
-    int ReturnValue();
+    bool isRunning();
     bool Kill();
 };
 

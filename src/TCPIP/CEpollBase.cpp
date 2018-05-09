@@ -1,3 +1,4 @@
+#include <neo_bridge/CDebug.h>
 #include "CEpollBase.h"
 #include "CUnpackTask.h"
 
@@ -16,7 +17,7 @@ CEpollBase::~CEpollBase()
 
 bool CEpollBase::Create()
 {
-	if (m_epollfd != -1)//epollѾ
+	if (m_epollfd != -1)
 	{
 		perror("m_epollfd existed.");
 		exit(1);
@@ -37,7 +38,6 @@ bool CEpollBase::AddEvent(int fd, __uint32_t events)
 	event.events = events;
 	event.data.fd = fd;
 	ctl = epoll_ctl(m_epollfd, EPOLL_CTL_ADD, fd, &event);
-	//printf("add %d\n",fd);
 	if (ctl == -1)
 	{
 		perror("AddEvent fail.");
@@ -83,12 +83,9 @@ bool CEpollBase::Wait(int timeout)
 	}
 	else if (m_result == 0)
 	{
-        //printf("Epoll Time out.\n");
 	}
 	else
 	{
-		//printf("onEvent %d.\n",m_epollfd);
-
 		onEvent();
 	}
 	return (m_result == -1) ? false : true;
@@ -110,7 +107,7 @@ void CEpollBase::Stop()
 
 void CEpollBase::onEvent()
 {
-    printf("On Base Event...\n");
+	printf("On Base Event...\n");
 }
 
 int CEpollBase::GetResults()

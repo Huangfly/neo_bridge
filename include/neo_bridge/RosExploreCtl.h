@@ -6,6 +6,7 @@
 #define NEO_BRIDGE_ROSEXPLORECTL_H
 
 #include "CCommandExecutor.h"
+#include <neo_bridge/CDebug.h>
 
 class RosExploreCtl:public CommandExecutor
 {
@@ -16,7 +17,7 @@ public:
     ~RosExploreCtl();
 
     bool Done();
-    int ReturnValue();
+    bool isRunning();
     bool Kill();
 };
 

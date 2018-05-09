@@ -7,7 +7,7 @@
 #include "CThreadPool.h"
 #include "CClientEpoll.h"
 #include <map>
-#include "neoslam_sdk/neo_map.hpp"
+#include "neoslam_sdk/Type_MutexMap.hpp"
 
 using namespace Neo;
 
@@ -20,7 +20,7 @@ public:
 	void onEvent();
 	virtual void onConnect(char *buf, int fd, int nRead);
 
-    static Neo::MutexMap<int,int> _connect_fds_count;
+    static Neo::MutexMap<int,int> fds;
 protected:
 	int nlisten;
 	CHostAddr *addr;

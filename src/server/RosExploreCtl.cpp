@@ -26,8 +26,8 @@ bool RosExploreCtl::Done() {
     return true;
 }
 
-int RosExploreCtl::ReturnValue() {
-    return 1;
+bool RosExploreCtl::isRunning() {
+    return isRun;
 }
 
 bool RosExploreCtl::Kill() {

@@ -34,12 +34,6 @@ namespace Neo{
             // Add an element to the queue.
             void inset(const std::pair<const T1, T2> &_pair) {
                 std::lock_guard<std::mutex> lock(the_mutex);
-
-                // if necessary, remove the oldest scan to make room for new
-                if (static_cast<int>(the_map.size()) >= max_size)
-                    the_map.clear();
-
-                //the_queue.push(std::move(v));
                 the_map.insert(_pair);
                 the_cond_var.notify_one();
             }
@@ -48,10 +42,8 @@ namespace Neo{
                 std::unique_lock<std::mutex> lock(the_mutex);
 
 
-                if(the_map.find(key) == the_map.end()){
-                    //it->second = val;
-                    the_map.insert(pair<T1,T2>(key,val));
-                //the_map[key] = val;
+                if(the_map.find(key) != the_map.end()){
+                    the_map[key] = val;
                     return true;
                 }
                 return false;
@@ -104,6 +96,14 @@ namespace Neo{
 
                 return (int)the_map.size();
             }
+
+            typename std::map<T1, T2>::iterator begin(){
+                return the_map.begin();
+            }
+
+            typename std::map<T1,T2>::iterator end(){
+                return the_map.end();
+            };
 
         private:
             int max_size;

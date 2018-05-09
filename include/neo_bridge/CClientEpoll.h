@@ -6,8 +6,7 @@
 #include "CThreadPool.h"
 #include "CShareMem.h"
 #include "packet.h"
-#include <map>
-#include <neoslam_sdk/neo_map.hpp>
+#include <neoslam_sdk/Type_MutexMap.hpp>
 
 
 #define CLIENTEPOLL_TIMEOUT 3
@@ -27,29 +26,6 @@ protected:
 	CThreadPool *m_BusPool;
 };
 
-class CBusTask:public CTask
-{
-public:
-	CBusTask(char *buf, int fd, int Len);
-	~CBusTask();
-	void doAction();
-private:
-	char *buf;
-	int fd;
-	int Len;
-};
 
-class CUnDataPackTask:public CTask
-{
-public:
-	CUnDataPackTask(char *buf, int fd, int Len, CThreadPool *m_BusPool);
-	~CUnDataPackTask();
-	void doAction();
-private:
-	char *buf;
-	int fd;
-	int nRead;
-	CThreadPool *m_BusPool;
-};
 
 #endif

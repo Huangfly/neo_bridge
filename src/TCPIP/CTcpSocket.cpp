@@ -1,13 +1,11 @@
 #include "CTcpSocket.h"
 
-//TCP׽ֵĬϹ캯
 CTcpSocket::CTcpSocket()
 :CSocket(true, AF_INET, 0)
 {
 	m_remote_addr = NULL;
 }
 
-//TCP׽ֵĿ캯
 CTcpSocket::CTcpSocket(const CTcpSocket &other)
 :CSocket(true, AF_INET, 0)
 {
@@ -16,13 +14,11 @@ CTcpSocket::CTcpSocket(const CTcpSocket &other)
 	this->m_remote_addr = other.getRemoteAddr();
 }
 
-//TCP׽ֵ
 CTcpSocket::~CTcpSocket()
 {
 	
 }
 
-//ظֵ
 CTcpSocket& CTcpSocket::operator =(const CTcpSocket &other)
 {
 	this->m_fd = other.getFd();

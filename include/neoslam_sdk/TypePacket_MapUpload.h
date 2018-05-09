@@ -8,7 +8,7 @@
 #define LOADMAP_SIZE 512
 #include "Type_Pose.h"
 
-namespace Neo_Type {
+namespace Neo_Packet {
     typedef struct {
         unsigned int serial_num;
         unsigned int package_sum;// map package total sum.

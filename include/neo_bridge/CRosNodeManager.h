@@ -12,7 +12,6 @@
 #include <string>
 #include <list>
 #include <vector>
-#include <neo_bridge/RosRobotCtl.h>
 
 #define NODE_CLOCE      0
 #define NODE_CLOCEING   1

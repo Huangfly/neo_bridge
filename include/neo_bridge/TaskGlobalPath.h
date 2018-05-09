@@ -7,22 +7,21 @@
 #include "CThreadPool.h"
 #include "CShareMem.h"
 #include "packet.h"
-#include "config.h"
-#include <neoslam_sdk/Type_GlobalPath.hpp>
-
+#include <neoslam_sdk/TypePacket_GlobalPath.h>
+#include <neo_bridge/CDebug.h>
 //using namespace Neo_Type;
 
 class CGlobalPathTask:public CTask
 {
 private:
 
-    packet_head head;
+    Neo_Packet::HEAD head;
     //Neo_Type::LIDAR_PACKAGE_POP package_recv;
-
+    CShareMem *shm_ack;
     int fd;
 public:
 
-    CGlobalPathTask(int fd, P_HEAD *bus_head, char *buf, int Len);
+    CGlobalPathTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len);
     ~CGlobalPathTask();
     void doAction();
 };

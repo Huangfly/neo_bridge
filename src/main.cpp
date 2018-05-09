@@ -3,12 +3,13 @@
 #include "CPreServer.h"
 #include "CShareMem.h"
 #include "CBackServer.h"
-#include "config.h"
+#include "CConfig.h"
 
 #include <map>
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <neo_bridge/CDebug.h>
 //#include "./CLog/CLog.h"
 /////////
 
@@ -52,16 +53,9 @@ void Catch_signal(int no)
 {
 }
 
+void killZombieProcess(pid_t mypid){
 
-int main(int argc, char *argv[])
-{
-	shm_bus.Create();
-    shm_ack.Create();
-	signal(SIGPIPE, Catch_signal);
-
-
-    pid_t mypid = getpid();
-    printf("this process pid is %d\n",mypid);
+    NeoInfo("this process pid is %d\n",mypid);
     FILE* fp = popen("ps -ed | grep \'neo_bridge_node\' | awk \'{print $1}\'","r");
     char buffer[10] = {0};
     while(fgets(buffer, 10, fp) != NULL)
@@ -70,11 +64,34 @@ int main(int argc, char *argv[])
         pid_t pid = (pid_t)(atoi(buffer));
 
         if(pid == mypid) continue;
-        printf("kill %d\n",pid);
+        NeoInfo("kill %d\n",pid);
         sprintf(popbuffer,"kill %d",pid);
         popen(popbuffer,"r");
     }
     pclose(fp);
+}
+
+int main(int argc, char *argv[])
+{
+	shm_bus.Create();
+    shm_ack.Create();
+	signal(SIGPIPE, Catch_signal);
+
+    Neo_Config::CConfig config;
+    config.LoadFille(argv[1]);
+    Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
+
+    if( config_ptr == NULL ){
+        printf("error: no found config file.\n");
+        return 0;
+    }
+
+    Neo_Log::InitDebug();
+
+
+
+    pid_t mypid = getpid();
+    killZombieProcess(mypid);
     //PreProcess(argc,argv);
 
     //ros::init(argc, argv, "neo_bridge");
@@ -111,9 +128,7 @@ void PreProcess(int argc, char *argv[])
 
 void BackProcess(int argc, char *argv[])
 {
-#ifdef USE_ROS
     ros::init(argc, argv, "neo_bridge");
-#endif
     CBackServer back_server;
     back_server.Exec(argc,argv);
     systerm_exit = true;

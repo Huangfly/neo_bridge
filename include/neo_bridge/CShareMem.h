@@ -39,7 +39,7 @@ public:
 	void Create();
 	void SemOp(int op);
 private:
-	int val;//źĳʼֵ
+	int val;
 	int sem_id;
 	key_t sem_key;
 };
@@ -50,26 +50,19 @@ public:
 	CShareMem(int shm_key, int sem_key, int nBlockCount = 10, int BlockSize = 200);
 	~CShareMem();
 	void Create();
-	//int GetEmpty();//ȡеݿ
-	void Write(char *buf, int Len, int fd);//ݿд
-	void Read(char *buf, int *Len, int *fd, P_HEAD *head);
+	void Write(char *buf, int Len, int fd);
+	void Read(char *buf, int *Len, int *fd, Neo_Packet::HEAD *head);
 private:
 	int shm_id;
 	int shm_key;
 	int size;
-	char *pBase;//ַ
-	int BlockSize;//һݿĴС
-	int nBlockCount;//ݿ
-	//////////////
-	//ϢУݺһ̻ȡ
-	//int msg_id;
-	//int msg_key;
-	/////////////////
-	//ź,ԴΪݿ
+	char *pBase;
+	int BlockSize;
+	int nBlockCount;
 	int sem_id;
 	int sem_key;
-	CSem *empty_sem;//Դź
-	CSem *full_sem;//ɶԴź
+	CSem *empty_sem;
+	CSem *full_sem;
 };
 
 #endif

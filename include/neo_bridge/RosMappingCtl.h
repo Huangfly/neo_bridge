@@ -6,6 +6,7 @@
 #define NEO_BRIDGE_ROSSLAMCTL_H
 
 #include <neo_bridge/CCommandExecutor.h>
+#include <neo_bridge/CDebug.h>
 
 class RosMappingCtl:public CommandExecutor
 {
@@ -16,7 +17,7 @@ public:
     ~RosMappingCtl();
 
     bool Done();
-    int ReturnValue();
+    bool isRunning();
     bool Kill();
 };
 

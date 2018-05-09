@@ -1,6 +1,5 @@
 #include "CHostAddr.h"
 
-//ĬϹ캯ֻʼ
 CHostAddr::CHostAddr()
 {
 	iLen = sizeof(struct sockaddr);
@@ -16,7 +15,6 @@ CHostAddr::CHostAddr(const CHostAddr &other)
 	addr.sin_port = htons(other.getPort());
 }
 
-//ι캯
 CHostAddr::CHostAddr(char *ip, int port)
 {
 	iLen = sizeof(struct sockaddr);
@@ -31,37 +29,31 @@ CHostAddr::~CHostAddr()
 
 }
 
-//IP
 void CHostAddr::setIP(char *ip)
 {
 	addr.sin_addr.s_addr = inet_addr(ip);
 }
 
-//ö˿ں
 void CHostAddr::setPort(int port)
 {
 	addr.sin_port = htons(port);
 }
 
-//ȡIP
 char* CHostAddr::getIP() const
 {
 	return inet_ntoa(addr.sin_addr);
 }
 
-//ȡ˿ں
 int CHostAddr::getPort() const
 {
 	return ntohs(addr.sin_port);
 }
 
-//ȡַ
 socklen_t CHostAddr::getSize() const
 {
 	return iLen;
 }
 
-//ȡַȵַ
 socklen_t* CHostAddr::getSizePtr() const
 {
 	return (socklen_t*)&iLen;

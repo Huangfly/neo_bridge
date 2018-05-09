@@ -48,16 +48,16 @@ message(STATUS "tcpip path" ${TCPIP_CPP_PATH})
 #=================================================
 #SET_TARGET_PROPERTIES(common PROPERTIES "-pthread")  
 
-add_library(common ${COMMON_CPP_PATH})
+add_library(common ${COMMON_CPP_PATH} src/common/CDebug.cpp)
 target_link_libraries(common pthread)
 
-add_library(tcpip ${TCPIP_CPP_PATH})
+add_library(tcpip ${TCPIP_CPP_PATH} src/TCPIP/CBusTask.cpp src/TCPIP/CUnDataPackTask.cpp)
 target_link_libraries(tcpip common)
 
 #=================================================
 #    executable
 #=================================================
-add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosRobotCtl.cpp include/neo_bridge/RosRobotCtl.h src/server/RosLidarCtl.cpp src/server/RosMappingCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosLidarCtl.h include/neo_bridge/RosMappingCtl.h include/neo_bridge/RosNavigationCtl.h include/neoslam_sdk/mode.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/Type_CmdVel.h include/neo_bridge/TaskCmdVel.h src/server/TaskLidar.cpp include/neo_bridge/TaskLidar.h include/neoslam_sdk/Type_Lidar.h include/neo_bridge/Debug.h include/neoslam_sdk/Type_Pose.h include/neoslam_sdk/neo_map.hpp src/server/TaskLoadMap.cpp include/neo_bridge/TaskLoadMap.h include/neoslam_sdk/Type_LoadMap.h include/neoslam_sdk/Type_UserData.h src/server/RosLocationCtl.cpp include/neo_bridge/RosLocationCtl.h src/server/CConfig.cpp include/neo_bridge/CConfig.h src/server/TaskGlobalPath.cpp include/neoslam_sdk/Type_GlobalPath.hpp include/neo_bridge/TaskGlobalPath.h)
+add_executable(${PROJECT_NAME}_node ${SERVER_CPP_PATH} src/main.cpp src/server/RosMappingCtl.cpp src/server/RosNavigationCtl.cpp include/neo_bridge/RosMappingCtl.h include/neo_bridge/RosNavigationCtl.h src/server/CCommandExecutor.cpp include/neo_bridge/CCommandExecutor.h src/server/RosExploreCtl.cpp include/neo_bridge/RosExploreCtl.h src/server/TaskCmdVel.cpp include/neoslam_sdk/TypePacket_CmdVel.h include/neo_bridge/TaskCmdVel.h src/server/TaskLidar.cpp include/neo_bridge/TaskLidar.h include/neoslam_sdk/TypePacket_LidarDatas.h include/neoslam_sdk/Type_Pose.h include/neoslam_sdk/Type_MutexMap.hpp src/server/TaskLoadMap.cpp include/neo_bridge/TaskLoadMap.h include/neoslam_sdk/TypePacket_MapUpload.h include/neoslam_sdk/Type_UserData.h src/server/RosLocalizationCtl.cpp include/neo_bridge/RosLocalizationCtl.h src/server/CConfig.cpp include/neo_bridge/CConfig.h src/server/TaskGlobalPath.cpp include/neoslam_sdk/TypePacket_GlobalPath.h include/neo_bridge/TaskGlobalPath.h include/neoslam_sdk/TypePacket_RobotStatus.h include/neoslam_sdk/TypePacket_RosControl.h include/neoslam_sdk/TypePacket_MapDatas.h include/neoslam_sdk/TypePacket_SendGoal.h include/neoslam_sdk/TypePacket_CancelGoal.h include/neo_bridge/CDebug.h include/neo_bridge/CBusTask.h include/neo_bridge/CUnDataPackTask.h src/server/ThreadReceiveAck.cpp include/neo_bridge/ThreadReceiveAck.h src/server/ThreadTimerTask.cpp  include/neo_bridge/ThreadTimerTask.h src/server/ThreadClientEpoll.cpp include/neo_bridge/ThreadClientEpoll.h)
 target_link_libraries(${PROJECT_NAME}_node
         ${catkin_LIBRARIES}
         ${LUA_LIBRARIES}

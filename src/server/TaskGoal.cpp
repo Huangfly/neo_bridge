@@ -1,19 +1,18 @@
 //
 // Created by huang on 17-12-14.
 /// /
-#include <neo_bridge/goal.h>
-#include "goal.h"
+#include <neo_bridge/TaskGoal.h>
+#include <neo_bridge/packet.h>
+#include "TaskGoal.h"
+#include <neo_bridge/CBackServer.h>
 
 
-extern CShareMem shm_ack;
-
-CGoalTask::CGoalTask(int fd, P_HEAD *bus_head, char *buf, int Len)
+CGoalTask::CGoalTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len)
 {
     this->fd = fd;
-    memcpy(&this->head,bus_head,sizeof(P_HEAD));
-    memcpy(&this->ack_pack,buf,sizeof(GOAL_PACKAGE_POP));
-
-
+    memcpy(&this->head,bus_head,sizeof(Neo_Packet::HEAD));
+    memcpy(&this->ack_pack,buf,Len);
+    this->shm_ack = CBackServer::GetAckShareMemery();
 }
 CGoalTask::~CGoalTask()
 {
@@ -24,7 +23,7 @@ void CGoalTask::doAction()
 {
     geometry_msgs::PoseStamped pose;
     CPacketStream packet;
-    GOAL_PACKAGE_ACK ack_body;
+    Neo_Packet::GOAL_PACKAGE_ACK ack_body;
     char ack_buf[60] = {0};
     int Size = 0;
 
@@ -39,7 +38,6 @@ void CGoalTask::doAction()
 
     CRosNode::PopMoveGoal(pose);
     //printf("recv goal...\n");
-    packet.Packet((unsigned char *)ack_buf, &Size, PACK_GOAL, &ack_body, sizeof(GOAL_PACKAGE_ACK), head.trans_id, head.msg_code);
-    //DEBUG_LOG((unsigned char*)ack_buf,Size);
-    shm_ack.Write((char*)ack_buf, Size, fd);
+    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &ack_body, sizeof(ack_body), head.ref, head.device_id);
+    shm_ack->Write((char*)ack_buf, Size, fd);
 }

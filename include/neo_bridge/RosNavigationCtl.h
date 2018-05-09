@@ -5,6 +5,7 @@
 #ifndef NEO_BRIDGE_ROSNAVIGATIONCTL_H
 #define NEO_BRIDGE_ROSNAVIGATIONCTL_H
 #include <neo_bridge/CCommandExecutor.h>
+#include <neo_bridge/CDebug.h>
 
 class RosNavigationCtl:public CommandExecutor
 {
@@ -16,7 +17,7 @@ public:
     ~RosNavigationCtl();
 
     bool Done();
-    int ReturnValue();
+    bool isRunning();
     bool Kill();
 };
 #endif //NEO_BRIDGE_ROSNAVIGATIONCTL_H

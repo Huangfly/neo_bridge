@@ -24,18 +24,14 @@ RosNavigationCtl::~RosNavigationCtl() {
 
 bool RosNavigationCtl::Done() {
     if(isRun)return true;
+    if(!CRosNode::waitForUnAction()) {
+        isRun = true;
+        return true;
+    }
     printf("Start Navigation\n");
     this->pid = CmdProcessOpen(this->cmd_.c_str(),NULL);
 
-    int count = 100;
-    while(count > 0){
-        count--;
-        if(CRosNode::IsAction()){
-            break;
-        }
-        usleep(50000);
-    }
-    if(count == 0){
+    if(!CRosNode::waitForAction()){
         return false;
     }
 
@@ -43,28 +39,26 @@ bool RosNavigationCtl::Done() {
     return true;
 }
 
-int RosNavigationCtl::ReturnValue() {
+bool RosNavigationCtl::isRunning() {
 
-    return 1;
+    return isRun;
 }
 
 bool RosNavigationCtl::Kill() {
     if(!isRun)return true;
-    CmdProcessOpen((char *) this->cmd_kill_.c_str(),NULL);
 
-    int count = 100;
-    while(count > 0){
-        count--;
-        if(!CRosNode::IsAction()){
-            break;
-        }
-        usleep(50000);
+    if(!CRosNode::waitForAction()) {
+        isRun = false;
+        return true;
     }
-    if(count == 0){
+
+    CmdProcessOpen((char *) this->cmd_kill_.c_str(),NULL);
+    printf("Stop navigation\n");
+
+    if(!CRosNode::waitForUnAction()){
         return false;
     }
 
-    printf("Stop navigation\n");
     isRun = false;
     return true;
 }

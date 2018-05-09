@@ -2,21 +2,21 @@
 // Created by huang on 18-4-20.
 //
 
-#include <neoslam_sdk/Type_LoadMap.h>
+#include <neoslam_sdk/TypePacket_MapUpload.h>
 #include <neoslam_sdk/Type_Pose.h>
+#include <neo_bridge/packet.h>
 #include "TaskLoadMap.h"
 #include "CBackServer.h"
-#include "neoslam_sdk/mode.h"
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "neo_bridge/CConfig.h"
+#include <neo_bridge/CBackServer.h>
 
 
-extern CShareMem shm_ack;
-
-CLoadMapTask::CLoadMapTask(int fd, P_HEAD *bus_head, char *buf, int Len) {
-    memcpy(&this->head,bus_head,sizeof(P_HEAD));
+CLoadMapTask::CLoadMapTask(int fd, Neo_Packet::HEAD *bus_head, char *buf, int Len) {
+    memcpy(&this->head,bus_head,sizeof(Neo_Packet::HEAD));
     memcpy(&this->recv_packet,buf,Len);
     this->fd = fd;
+    this->shm_ack = CBackServer::GetAckShareMemery();
 }
 
 CLoadMapTask::~CLoadMapTask() {
@@ -31,7 +31,7 @@ static bool SaveMap(int ID){
         if(user != NULL) {
 
             map = &user->LoadMapDatas;
-            printf("Received a %d X %d map @ %.3f m/pix\n",
+            NeoDebug("Received a %d X %d map @ %.3f m/pix\n",
                    map->info.width,
                    map->info.height,
                    map->info.resolution);
@@ -43,10 +43,10 @@ static bool SaveMap(int ID){
                 mapname_ = "navigation";
             }
             std::string mapdatafile = mapname_ + ".pgm";
-            printf("Writing map occupancy data to %s\n", mapdatafile.c_str());
+            NeoDebug("Writing map occupancy data to %s\n", mapdatafile.c_str());
             FILE *out = fopen(mapdatafile.c_str(), "w");
             if (!out) {
-                printf("Couldn't save map file to %s\n", mapdatafile.c_str());
+                NeoDebug("Couldn't save map file to %s\n", mapdatafile.c_str());
                 return false;
             }
 
@@ -69,7 +69,7 @@ static bool SaveMap(int ID){
 
 
             std::string mapmetadatafile = mapname_ + ".yaml";
-            printf("Writing map occupancy data to %s\n", mapmetadatafile.c_str());
+            NeoDebug("Writing map occupancy data to %s\n", mapmetadatafile.c_str());
             FILE *yaml = fopen(mapmetadatafile.c_str(), "w");
 
             /*
@@ -106,15 +106,15 @@ static bool SaveMap(int ID){
 
 void CLoadMapTask::doAction() {
     unsigned char ack_buf[800] = {0};
-    Neo_Type::LOADMAP_PACKAGE_ACK ack_package = {0};
+    Neo_Packet::LOADMAP_PACKAGE_ACK ack_package = {0};
     int Size = 0;
     int len = 0;
     CPacketStream packet;
 
-    if( CBackServer::UserDatas.findKey(head.msg_code) ){
+    if( CBackServer::UserDatas.findKey(head.device_id) ){
         nav_msgs::OccupancyGrid *map_ptr = NULL;
         Neo_Type::UserData *user = NULL;
-        CBackServer::UserDatas.get(head.msg_code,&user);
+        CBackServer::UserDatas.get(head.device_id,&user);
         //printf("LoadMap id:%d\n",user->id);
         if(user != NULL) {
 
@@ -144,18 +144,18 @@ void CLoadMapTask::doAction() {
             //printf("sum:%d num:%d\n",ack_package.package_sum,ack_package.package_num);
         }
     }else{
-        printf("No User %d\n",CBackServer::UserDatas.size());
+        NeoDebug("No User %d\n",CBackServer::UserDatas.size());
     }
 
 
 
 
 
-    packet.Packet(ack_buf, &Size, PACK_LOADMAP, &ack_package, sizeof(LOADMAP_PACKAGE_ACK), head.trans_id, head.msg_code);
-    shm_ack.Write((char*)ack_buf, Size, fd);
+    packet.Packet(ack_buf, &Size, this->head.function_id, &ack_package, sizeof(ack_package), head.ref, head.device_id);
+    shm_ack->Write((char*)ack_buf, Size, fd);
 
     if( ack_package.package_num > ack_package.package_sum && ack_package.package_sum != 0){
-        printf("LoadMap end\n");
-        SaveMap(head.msg_code);
+        //NeoDebug("LoadMap end\n");
+        SaveMap(head.device_id);
     }
 }

@@ -15,6 +15,7 @@ public:
 	virtual ~CTask();
 	virtual void doAction() = 0;
 private:
+
 };
 
 class CThreadPool

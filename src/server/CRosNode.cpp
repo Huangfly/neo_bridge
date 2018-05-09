@@ -1,18 +1,17 @@
 //
 // Created by huang on 17-12-7.
 //
-
-#include <neo_bridge/robot_status.h>
 #include <neo_bridge/CRosNode.h>
+#include <neo_bridge/TaskRobotStatus.h>
 #include "CRosNode.h"
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 #include <neo_bridge/CConfig.h>
+#include <neo_bridge/CBackServer.h>
 
 using namespace Neo_Config;
 
 extern bool systerm_exit;
-extern CShareMem shm_bus;
 static geometry_msgs::PoseStamped st_MoveGoal;
 static geometry_msgs::PoseStamped st_InitPose;
 static actionlib_msgs::GoalID st_CancelGoal;
@@ -20,25 +19,20 @@ static ROS_PUB_FLAG st_pub_flag;
 nav_msgs::OccupancyGrid CRosNode::map_base_ = nav_msgs::OccupancyGrid();
 sensor_msgs::LaserScan CRosNode::scan_ = sensor_msgs::LaserScan();
 nav_msgs::Path CRosNode::path_ = nav_msgs::Path();
-STATUS_PACKAGE_ACK CRosNode::robot_status = {0};
-STATUS_PACKAGE_ACK CRosNode::laser_pose = {0};
+Neo_Packet::STATUS_PACKAGE_ACK CRosNode::robot_status = {0};
+Neo_Packet::STATUS_PACKAGE_ACK CRosNode::laser_pose = {0};
 bool CRosNode::isAction = false;
 
 ros::Publisher  pub_cmdVel_;
 
 pthread_mutex_t *mutex_update_Path = NULL;
-
+pthread_mutex_t *mutex_update_Map = NULL;
+pthread_mutex_t *mutex_update_Lidar = NULL;
 
 CRosNode::CRosNode()
         :nh("~")
         ,nhp("~")
 {
-    std::string config_name;
-    if( !nh.getParam("config_lua", config_name) ){
-        Neo_Config::CConfig config;
-        //config.LoadFille(config_name.c_str());
-    }
-
     Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
 
     if( config_ptr == NULL ){
@@ -50,6 +44,7 @@ CRosNode::CRosNode()
     sub_scan_ = nh.subscribe(config_ptr->scanTopic_,10,&CRosNode::cbScan,this);
     sub_moveStatus_ = nh.subscribe("/move_base/status",5,&CRosNode::cbMoveStatus, this);
     sub_path_ = nh.subscribe(config_ptr->pathTopic_,10,&CRosNode::cbPath, this);
+    sub_tf_ = nh.subscribe("/tf",10,&CRosNode::cbTF, this);
 
     pub_goal_ = nh.advertise<geometry_msgs::PoseStamped>("/move_base_simple/goal",1);
     pub_cancelGoal_ = nh.advertise<actionlib_msgs::GoalID>("/move_base/cancel",1);
@@ -65,6 +60,16 @@ CRosNode::CRosNode()
     if(mutex_update_Path == NULL){
         mutex_update_Path = new pthread_mutex_t;
         pthread_mutex_init(mutex_update_Path,NULL);
+    }
+
+    if(mutex_update_Map == NULL){
+        mutex_update_Map = new pthread_mutex_t;
+        pthread_mutex_init(mutex_update_Map,NULL);
+    }
+
+    if(mutex_update_Lidar == NULL){
+        mutex_update_Lidar = new pthread_mutex_t;
+        pthread_mutex_init(mutex_update_Lidar,NULL);
     }
 }
 
@@ -101,17 +106,6 @@ void CRosNode::Run()
             tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->robotFrameId_,ros::Time(0.),transform_map_odom);
 
             tf_listener->lookupTransform(config_ptr->mapFrameId_,config_ptr->scanFrameId_,ros::Time(0.),transform_map_laser);
-
-            //printf("----------------------- tf\n");
-            isAction = true;
-            //printf("x:%f\ny:%f\n",robot_status.x,robot_status.y);
-            //printf("x:%f\ny:%f\nz:%f\nw:%f\n",robot_status.Quaternion[0] ,robot_status.Quaternion[1] ,robot_status.Quaternion[2] ,robot_status.Quaternion[3]);
-            //tf_listener.waitForTransform("map","odom",ros::Time(0.1));
-        }catch (tf::TransformException &ex){
-            //printf("error tf\n");
-            isAction = false;
-        }
-        if(isAction){
             robot_status.x = transform_map_odom.getOrigin().getX();
             robot_status.y = transform_map_odom.getOrigin().getY();
             robot_status.z = transform_map_odom.getOrigin().getZ();
@@ -127,15 +121,18 @@ void CRosNode::Run()
             laser_pose.Quaternion[1] = transform_map_laser.getRotation().getY();
             laser_pose.Quaternion[2] = transform_map_laser.getRotation().getZ();
             laser_pose.Quaternion[3] = transform_map_laser.getRotation().getW();
+        }catch (tf::TransformException &ex){
         }
+
         ros::spinOnce();
         usleep(10000);
     }
     printf("CRosNode exit.\n");
     systerm_exit = true;
-    shm_bus.Write((char*)&systerm_exit,1,0);
+    CShareMem *shm_bus = NULL;
+    shm_bus = CBackServer::GetBusShareMemery();
+    shm_bus->Write((char*)&systerm_exit,1,0);
 }
-#ifdef USE_ROS
 
 void CRosNode::PopMoveGoal(geometry_msgs::PoseStamped goal)
 {
@@ -165,39 +162,21 @@ void CRosNode::PopCancelGoal()
 
 void CRosNode::cbMap(const nav_msgs::OccupancyGrid::ConstPtr &msg)
 {
-    static ros::Time pre_time = ros::Time::now();
-    ros::Time cur_time = ros::Time::now();
-
-
-    //printf("time %ld %ld\n",cur_time.toNSec(),pre_time.toNSec());
-    pre_time = cur_time;
+    pthread_mutex_lock(mutex_update_Map);
     this->map_base_ = *msg;
-    robot_status.updateMap = 1;
-    //printf("recv Map...%d\n",robot_status.updateMap );
+    pthread_mutex_unlock(mutex_update_Map);
 }
 
-void CRosNode::cbOdom(const nav_msgs::Odometry &msg) {
-    /*robot_status.x = msg.pose.pose.position.x;
-    robot_status.y = msg.pose.pose.position.y;
-    robot_status.z = msg.pose.pose.position.z;
-    robot_status.Quaternion[0] = msg.pose.pose.orientation.x;
-    robot_status.Quaternion[1] = msg.pose.pose.orientation.y;
-    robot_status.Quaternion[2] = msg.pose.pose.orientation.z;
-    robot_status.Quaternion[3] = msg.pose.pose.orientation.w;*/
-    //printf("recv odom %d\n",robot_status.updateMap);
-}
 
 void CRosNode::cbMoveStatus(const actionlib_msgs::GoalStatusArray &msg) {
     if(msg.status_list.size() > 0)
         robot_status.movebase_status = msg.status_list.begin().base()->status;
-    //printf("MoveBaseStatus...%d\n",CRobotStatusTask::robot_status.movebase_status );
 }
 
 void CRosNode::cbScan(const sensor_msgs::LaserScan &msg) {
-    //pthread_mutex_lock(mutex_update_Path);
+    pthread_mutex_lock(mutex_update_Lidar);
     this->scan_ = msg;
-    //pthread_mutex_lock(mutex_update_Path);
-    //printf("scan:%d\n",this->scan_.ranges.size());
+    pthread_mutex_unlock(mutex_update_Lidar);
 }
 
 
@@ -206,7 +185,16 @@ void CRosNode::cbPath(const nav_msgs::Path &msg){
     pthread_mutex_lock(mutex_update_Path);
     this->path_ = msg;
     pthread_mutex_unlock(mutex_update_Path);
-    //printf("get path.%d\n",(unsigned int)this->path_.poses.size());
+}
+
+void CRosNode::cbTF(const tf2_msgs::TFMessage &msg){
+    Neo_Config::ConfigParamer *config_ptr = Neo_Config::GetConfigParamer();
+    for (int i = 0; i < msg.transforms.size(); ++i) {
+        if( msg.transforms[i].header.frame_id == config_ptr->mapFrameId_ && msg.transforms[i].child_frame_id == "odom" ){
+            isAction = true;
+            //printf("-----tf\n");
+        }
+    }
 }
 
 void CRosNode::GetGlobalPath(nav_msgs::Path &out){
@@ -215,10 +203,46 @@ void CRosNode::GetGlobalPath(nav_msgs::Path &out){
     pthread_mutex_unlock(mutex_update_Path);
 }
 
+void CRosNode::GetMap(nav_msgs::OccupancyGrid &out){
+    pthread_mutex_lock(mutex_update_Map);
+    out = CRosNode::map_base_;
+    pthread_mutex_unlock(mutex_update_Map);
+}
+void CRosNode::GetLidar(sensor_msgs::LaserScan &out,Neo_Type::POSE &pose){
+
+    pthread_mutex_lock(mutex_update_Lidar);
+    out = CRosNode::scan_;
+    memcpy(&pose, &laser_pose, sizeof(Neo_Type::POSE));
+    pthread_mutex_unlock(mutex_update_Lidar);
+
+}
+bool CRosNode::waitForAction(){
+    CRosNode::isAction = false;
+    int time_count = 5;
+    while (!CRosNode::isAction && time_count > 0){
+        sleep(1);
+        time_count--;
+    }
+    if(time_count == 0){
+        return false;
+    }
+    return true;
+}
+
+bool CRosNode::waitForUnAction(){
+    CRosNode::isAction = true;
+    int time_count = 5;
+    while ( CRosNode::isAction && time_count > 0 ){
+        CRosNode::isAction = false;
+        sleep(1);
+        time_count--;
+    }
+    if(time_count == 0){
+        return false;
+    }
+    return true;
+}
+
 bool CRosNode::IsAction(){
     return CRosNode::isAction;
 }
-
-
-
-#endif

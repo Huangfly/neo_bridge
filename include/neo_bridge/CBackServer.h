@@ -7,13 +7,10 @@
 #include "CUnpackTask.h"
 #include "CThreadBase.h"
 #include "CRosNode.h"
-#include "config.h"
 #include "neoslam_sdk/Type_UserData.h"
-#include "neoslam_sdk/neo_map.hpp"
-#ifdef USE_ROS
+#include "neoslam_sdk/Type_MutexMap.hpp"
 #include <ros/ros.h>
 #include <nav_msgs/OccupancyGrid.h>
-#endif
 
 using namespace Neo;
 using namespace Neo_Type;
@@ -24,10 +21,10 @@ public:
 	CBackServer();
 	~CBackServer();
 	void Exec(int argc,char **argv);
+	static CShareMem* GetBusShareMemery();
+	static CShareMem* GetAckShareMemery();
 	static Neo::MutexMap<unsigned int, Neo_Type::UserData> UserDatas;
 private:
-
-
 	CThreadPool *busctl_pool;
 };
 
