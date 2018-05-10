@@ -20,13 +20,13 @@ CCmdVelTask::~CCmdVelTask() {
 
 void CCmdVelTask::doAction() {
     CPacketStream packet;
-    Neo_Packet::CMDVEL_PACKAGE_ACK ack;
-    char ack_buf[60] = {0};
+    Neo_Packet::CMDVEL_PACKET_RESPONSE response = {0};
+    char response_buf[60] = {0};
     int Size = 0;
-    ack.ack = 1;
+    response.ack = 1;
     printf("x = %f,y = %f,z = %f\n",packet_body.x,packet_body.y,packet_body.z);
     CRosNode::PopCmdVel(packet_body.x,packet_body.y,packet_body.z);
-    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &ack, sizeof(ack), head.ref, head.device_id);
+    packet.Packet((unsigned char *)response_buf, &Size, this->head.function_id, &response, sizeof(response), head.ref, head.device_id);
 
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    shm_ack->Write((char*)response_buf, Size, fd);
 }

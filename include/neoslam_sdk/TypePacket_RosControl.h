@@ -9,11 +9,11 @@ namespace Neo_Packet{
     typedef struct {
         char enable;//0 enable  1 unable
         char node_name[20];
-    }NODECTL_PACKAGE_POP;
+    }ROSCONTROL_PACKET_REQUEST;
 
     typedef struct {
         char ack[10];
-    }NODECTL_PACKAGE_ACK;
+    }ROSCONTROL_PACKET_RESPONSE;
 }
 
 #endif //NEO_BRIDGE_TYPE_ROSCTL_HPP

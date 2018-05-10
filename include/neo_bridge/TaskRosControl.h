@@ -16,7 +16,7 @@ class CRosControlTask:public CTask
 private:
 
     Neo_Packet::HEAD head;
-    Neo_Packet::NODECTL_PACKAGE_POP pop;
+    Neo_Packet::ROSCONTROL_PACKET_REQUEST pop;
     int fd;
     CShareMem *shm_ack;
 public:

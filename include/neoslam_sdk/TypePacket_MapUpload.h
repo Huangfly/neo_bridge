@@ -19,14 +19,14 @@ namespace Neo_Packet {
         float resolution;
         unsigned int data_size;
         unsigned char data[LOADMAP_SIZE];
-    } LOADMAP_PACKAGE_POP;
+    } MAPUPLOAD_PACKET_REQUEST;
 
 
     typedef struct {
         unsigned int serial_num;
         unsigned int package_sum;// map package total sum.
         unsigned int package_num;// map package num.
-    } LOADMAP_PACKAGE_ACK;
+    } MAPUPLOAD_PACKET_RESPONSE;
 }
 
 #endif //NEO_BRIDGE_TYPE_LOADMAP_H

@@ -15,7 +15,7 @@ class CRobotStatusTask:public CTask
 {
 private:
     Neo_Packet::HEAD head;
-    Neo_Packet::STATUS_PACKAGE_POP recv_data;
+    Neo_Packet::ROBOTSTATUS_PACKET_REQUEST recv_data;
     int fd;
     CShareMem *shm_ack;
 public:

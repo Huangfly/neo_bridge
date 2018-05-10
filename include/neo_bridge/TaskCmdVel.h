@@ -16,7 +16,7 @@ class CCmdVelTask:public CTask
 private:
 
     Neo_Packet::HEAD head;
-    Neo_Packet::CMDVEL_PACKAGE_POP packet_body;
+    Neo_Packet::CMDVEL_PACKET_REQUEST packet_body;
     int fd;
     CShareMem *shm_ack;
 public:

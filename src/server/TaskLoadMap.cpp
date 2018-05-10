@@ -105,8 +105,8 @@ static bool SaveMap(int ID){
 }
 
 void CLoadMapTask::doAction() {
-    unsigned char ack_buf[800] = {0};
-    Neo_Packet::LOADMAP_PACKAGE_ACK ack_package = {0};
+    unsigned char response_buf[800] = {0};
+    Neo_Packet::MAPUPLOAD_PACKET_RESPONSE response = {0};
     int Size = 0;
     int len = 0;
     CPacketStream packet;
@@ -139,8 +139,8 @@ void CLoadMapTask::doAction() {
 
             map_ptr->data.insert(map_ptr->data.end(), recv_packet.data, recv_packet.data + recv_packet.data_size);
 
-            ack_package.package_num = recv_packet.package_num + 1;
-            ack_package.package_sum = recv_packet.package_sum;
+            response.package_num = recv_packet.package_num + 1;
+            response.package_sum = recv_packet.package_sum;
             //printf("sum:%d num:%d\n",ack_package.package_sum,ack_package.package_num);
         }
     }else{
@@ -151,10 +151,10 @@ void CLoadMapTask::doAction() {
 
 
 
-    packet.Packet(ack_buf, &Size, this->head.function_id, &ack_package, sizeof(ack_package), head.ref, head.device_id);
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    packet.Packet(response_buf, &Size, this->head.function_id, &response, sizeof(response), head.ref, head.device_id);
+    shm_ack->Write((char*)response_buf, Size, fd);
 
-    if( ack_package.package_num > ack_package.package_sum && ack_package.package_sum != 0){
+    if( response.package_num > response.package_sum && response.package_sum != 0){
         //NeoDebug("LoadMap end\n");
         SaveMap(head.device_id);
     }

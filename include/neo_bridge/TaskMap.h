@@ -15,7 +15,7 @@ class CMapTask:public CTask
 {
 private:
     Neo_Packet::HEAD head;
-    Neo_Packet::MAP_PACKAGE_POP package_pop;
+    Neo_Packet::MAPDATAS_PACKET_REQUEST package_pop;
     int fd;
     CShareMem *shm_ack;
 public:

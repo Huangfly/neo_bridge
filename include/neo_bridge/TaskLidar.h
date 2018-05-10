@@ -17,7 +17,7 @@ class CLidarTask:public CTask
 private:
 
     Neo_Packet::HEAD head;
-    Neo_Packet::LIDAR_PACKAGE_POP package_recv;
+    Neo_Packet::LIDARDATAS_PACKET_REQUEST package_recv;
     CShareMem *shm_ack;
     int fd;
 public:

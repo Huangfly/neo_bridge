@@ -11,13 +11,13 @@
 namespace Neo_Packet {
     typedef struct {
         unsigned int serial_num;
-    } GLOBALPATH_PACKAGE_POP;
+    } GLOBALPLAN_PACKET_REQUEST;
 
     typedef struct {
         unsigned int serial_num;
         unsigned int path_size;
         Neo_Type::POINT path[PATH_MAX_SIZE];
-    } GLOBALPATH_PACKAGE_ACK;
+    } GLOBALPLAN_PACKET_RESPONSE;
 }
 
 #endif //NEO_BRIDGE_TYPE_GLOBALPATH_HPP

@@ -10,6 +10,13 @@
 
 
 namespace Neo_Packet {
+
+    typedef struct {
+        unsigned int serial_num;
+        unsigned int package_sum;// map package total sum.
+        unsigned int package_num;// map package num.
+    } LIDARDATAS_PACKET_REQUEST;
+
     typedef struct {
         unsigned int serial_num;
         unsigned int package_sum;// map package total sum.
@@ -20,13 +27,8 @@ namespace Neo_Packet {
         Neo_Type::POSE pose;
         unsigned int rangs_size;
         float rangs[LIDARDATA_SIZE];
-    } LIDAR_PACKAGE_ACK;
+    } LIDARDATAS_PACKET_RESPONSE;
 
-    typedef struct {
-        unsigned int serial_num;
-        unsigned int package_sum;// map package total sum.
-        unsigned int package_num;// map package num.
-    } LIDAR_PACKAGE_POP;
 }
 #endif //NEO_BRIDGE_TYPE_LIDAR_H
 

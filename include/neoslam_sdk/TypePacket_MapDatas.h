@@ -12,7 +12,7 @@ namespace Neo_Packet{
     typedef struct {
         unsigned int package_sum;// map package total sum.
         unsigned int package_num;// map package num.
-    }MAP_PACKAGE_POP;
+    }MAPDATAS_PACKET_REQUEST;
 
     typedef struct {
         unsigned int package_sum;// map package total sum.
@@ -26,7 +26,7 @@ namespace Neo_Packet{
         unsigned int width;
         unsigned int hight;
         char data[MAPDATAS_SIZE];
-    }MAP_PACKAGE_ACK;
+    }MAPDATAS_PACKET_RESPONSE;
 
 }
 

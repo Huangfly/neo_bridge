@@ -23,11 +23,11 @@ void CGoalTask::doAction()
 {
     geometry_msgs::PoseStamped pose;
     CPacketStream packet;
-    Neo_Packet::GOAL_PACKAGE_ACK ack_body;
-    char ack_buf[60] = {0};
+    Neo_Packet::SENDGOAL_PACKET_RESPONSE response;
+    char response_buf[60] = {0};
     int Size = 0;
 
-    ack_body.isSuccess = 1;
+    response.isSuccess = 1;
     pose.pose.position.x = this->ack_pack.x;
     pose.pose.position.y = this->ack_pack.y;
     pose.pose.position.z = this->ack_pack.z;
@@ -38,6 +38,6 @@ void CGoalTask::doAction()
 
     CRosNode::PopMoveGoal(pose);
     //printf("recv goal...\n");
-    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &ack_body, sizeof(ack_body), head.ref, head.device_id);
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    packet.Packet((unsigned char *)response_buf, &Size, this->head.function_id, &response, sizeof(response), head.ref, head.device_id);
+    shm_ack->Write((char*)response_buf, Size, fd);
 }

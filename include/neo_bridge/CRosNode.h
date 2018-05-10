@@ -69,8 +69,8 @@ public:
     static nav_msgs::OccupancyGrid map_base_;
     static sensor_msgs::LaserScan scan_;
     static nav_msgs::Path path_;
-    static Neo_Packet::STATUS_PACKAGE_ACK robot_status;
-    static Neo_Packet::STATUS_PACKAGE_ACK laser_pose;
+    static Neo_Packet::ROBOTSTATUS_PACKET_RESPONSE robot_status;
+    static Neo_Packet::ROBOTSTATUS_PACKET_RESPONSE laser_pose;
     static bool isAction;
 };
 

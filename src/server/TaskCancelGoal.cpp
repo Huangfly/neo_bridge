@@ -24,12 +24,12 @@ CCancelGoalTask::~CCancelGoalTask()
 
 void CCancelGoalTask::doAction() {
     CPacketStream packet;
-    Neo_Packet::CANCELGOAL_PACKAGE_ACK ack;
-    char ack_buf[60] = {0};
+    Neo_Packet::CANCELGOAL_PACKET_RESPONSE response = {0};
+    char response_buf[60] = {0};
     int Size = 0;
-    ack.ack = 1;
+    response.ack = 1;
     CRosNode::PopCancelGoal();
-    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &ack, sizeof(ack), head.ref, head.device_id);
+    packet.Packet((unsigned char *)response_buf, &Size, this->head.function_id, &response, sizeof(response), head.ref, head.device_id);
 
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    shm_ack->Write((char*)response_buf, Size, fd);
 }

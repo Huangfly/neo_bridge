@@ -11,11 +11,11 @@ namespace Neo_Packet{
         float y;
         float z;
         float Quaternion[4];
-    }GOAL_PACKAGE_POP;
+    }SENDGOAL_PACKET_REQUEST;
 
     typedef struct {
         char isSuccess;
-    }GOAL_PACKAGE_ACK;
+    }SENDGOAL_PACKET_RESPONSE;
 }
 
 #endif //NEO_BRIDGE_TYPE_GOAL_HPP

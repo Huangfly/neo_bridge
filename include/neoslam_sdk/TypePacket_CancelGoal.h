@@ -9,11 +9,11 @@
 namespace Neo_Packet{
     typedef struct {
         char isAck;
-    }CANCELGOAL_PACKAGE_POP;
+    }CANCELGOAL_PACKET_REQUEST;
 
     typedef struct {
         char ack;
-    }CANCELGOAL_PACKAGE_ACK;
+    }CANCELGOAL_PACKET_RESPONSE;
 }
 
 #endif //NEO_BRIDGE_TYPEPACKET_CANCELGOAL_H

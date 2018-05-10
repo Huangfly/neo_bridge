@@ -28,7 +28,7 @@ void CGlobalPathTask::doAction() {
     nav_msgs::Path path;
     CPacketStream packet;
     int Size = 0;
-    Neo_Packet::GLOBALPATH_PACKAGE_ACK ack = {0};
+    Neo_Packet::GLOBALPLAN_PACKET_RESPONSE response = {0};
     char ack_buf[600] = {0};
 
 
@@ -41,18 +41,19 @@ void CGlobalPathTask::doAction() {
 
                 int i, j;
                 for (i = 0, j = 0; i < size && j < (PATH_MAX_SIZE); i+=step_, j++) {
-                    ack.path[j].x = path.poses[i].pose.position.x;
-                    ack.path[j].y = path.poses[i].pose.position.y;
+                    response.path[j].x = path.poses[i].pose.position.x;
+                    response.path[j].y = path.poses[i].pose.position.y;
                 }
-                ack.path_size = j;
+                response.path_size = j;
             }else{
-                ack.path_size = size;
+                response.path_size = size;
                 for (int i = 0; i < size; ++i) {
-                    ack.path[i].x = path.poses[i].pose.position.x;
-                    ack.path[i].y = path.poses[i].pose.position.y;
+                    response.path[i].x = path.poses[i].pose.position.x;
+                    response.path[i].y = path.poses[i].pose.position.y;
                 }
             }
 
-    packet.Packet((unsigned char*)ack_buf, &Size, this->head.function_id, &ack, sizeof(ack), head.ref, head.device_id);
+    packet.Packet((unsigned char*)ack_buf, &Size, this->head.function_id, &response, sizeof(response), head.ref, head.device_id);
     shm_ack->Write((char*)ack_buf, Size, fd);
+
 }

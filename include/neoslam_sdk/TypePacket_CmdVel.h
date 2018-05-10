@@ -9,10 +9,10 @@ namespace Neo_Packet {
         float x;
         float y;
         float z;
-    } CMDVEL_PACKAGE_POP;
+    } CMDVEL_PACKET_REQUEST;
 
     typedef struct {
         char ack;
-    } CMDVEL_PACKAGE_ACK;
+    } CMDVEL_PACKET_RESPONSE;
 }
 #endif //NEO_BRIDGE_TYPE_CMDVEL_H

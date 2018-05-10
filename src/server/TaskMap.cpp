@@ -21,8 +21,8 @@ CMapTask::~CMapTask()
 
 void CMapTask::doAction()
 {
-    unsigned char ack_buf[800] = {0};
-    Neo_Packet::MAP_PACKAGE_ACK ack_package = {0};
+    unsigned char response_buf[800] = {0};
+    Neo_Packet::MAPDATAS_PACKET_RESPONSE response = {0};
     int Size = 0;
     int len = 0;
     CPacketStream packet;
@@ -40,32 +40,32 @@ void CMapTask::doAction()
             this->map_ptr = &user->MapDatas;
             if(this->map_ptr->data.size() > 0) {
 
-                ack_package.package_sum =
+                response.package_sum =
                         map_ptr->data.size() % 512 > 0 ? map_ptr->data.size() / 512 + 1 : map_ptr->data.size() / 512;
-                ack_package.package_num = this->package_pop.package_num + 1;
-                ack_package.width = map_ptr->info.width;
-                ack_package.hight = map_ptr->info.height;
-                ack_package.resolution = map_ptr->info.resolution;
+                response.package_num = this->package_pop.package_num + 1;
+                response.width = map_ptr->info.width;
+                response.hight = map_ptr->info.height;
+                response.resolution = map_ptr->info.resolution;
 
-                ack_package.x = map_ptr->info.origin.position.x;
-                ack_package.y = map_ptr->info.origin.position.y;
-                ack_package.z = map_ptr->info.origin.position.z;
-                ack_package.Quaternion[0] = map_ptr->info.origin.orientation.x;
-                ack_package.Quaternion[1] = map_ptr->info.origin.orientation.y;
-                ack_package.Quaternion[2] = map_ptr->info.origin.orientation.z;
-                ack_package.Quaternion[3] = map_ptr->info.origin.orientation.w;
+                response.x = map_ptr->info.origin.position.x;
+                response.y = map_ptr->info.origin.position.y;
+                response.z = map_ptr->info.origin.position.z;
+                response.Quaternion[0] = map_ptr->info.origin.orientation.x;
+                response.Quaternion[1] = map_ptr->info.origin.orientation.y;
+                response.Quaternion[2] = map_ptr->info.origin.orientation.z;
+                response.Quaternion[3] = map_ptr->info.origin.orientation.w;
 
                 //printf("pack num:%d\n",ack_package.package_num);
-                if (ack_package.package_sum < ack_package.package_num)return;
-                ack_package.size = this->map_ptr->data.size();
-                signed char *mappage = (signed char *) (&(map_ptr->data[(ack_package.package_num - 1) * 512]));
-                if (ack_package.package_sum == ack_package.package_num) {
+                if (response.package_sum < response.package_num)return;
+                response.size = this->map_ptr->data.size();
+                signed char *mappage = (signed char *) (&(map_ptr->data[(response.package_num - 1) * 512]));
+                if (response.package_sum == response.package_num) {
 
-                    memcpy(ack_package.data, mappage, (map_ptr->data.size() % 512 == 0 ? 512 : map_ptr->data.size() % 512));
+                    memcpy(response.data, mappage, (map_ptr->data.size() % 512 == 0 ? 512 : map_ptr->data.size() % 512));
                     CRosNode::robot_status.updateMap = 0;//update map success
                 } else {
 
-                    memcpy(ack_package.data, mappage, 512);
+                    memcpy(response.data, mappage, 512);
                 }
             }
             //NeoInfo("send Map\n");
@@ -75,6 +75,6 @@ void CMapTask::doAction()
     }
 
 
-    packet.Packet(ack_buf, &Size, this->head.function_id, &ack_package, sizeof(Neo_Packet::MAP_PACKAGE_ACK), head.ref, head.device_id);
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    packet.Packet(response_buf, &Size, this->head.function_id, &response, sizeof(Neo_Packet::MAPDATAS_PACKET_RESPONSE), head.ref, head.device_id);
+    shm_ack->Write((char*)response_buf, Size, fd);
 }

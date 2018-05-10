@@ -19,8 +19,8 @@ static ROS_PUB_FLAG st_pub_flag;
 nav_msgs::OccupancyGrid CRosNode::map_base_ = nav_msgs::OccupancyGrid();
 sensor_msgs::LaserScan CRosNode::scan_ = sensor_msgs::LaserScan();
 nav_msgs::Path CRosNode::path_ = nav_msgs::Path();
-Neo_Packet::STATUS_PACKAGE_ACK CRosNode::robot_status = {0};
-Neo_Packet::STATUS_PACKAGE_ACK CRosNode::laser_pose = {0};
+Neo_Packet::ROBOTSTATUS_PACKET_RESPONSE CRosNode::robot_status = {0};
+Neo_Packet::ROBOTSTATUS_PACKET_RESPONSE CRosNode::laser_pose = {0};
 bool CRosNode::isAction = false;
 
 ros::Publisher  pub_cmdVel_;

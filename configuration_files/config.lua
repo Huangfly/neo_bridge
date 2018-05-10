@@ -15,5 +15,3 @@ navigation_kill_shell_dir = "bash ~/.neo/bash/navigation_kill.sh"
 
 map_save_dir = "/home/huang/.neo/maps/navigation"
 path_topic = "/move_base_node/NavfnROS/plan"
-
-debug_mode = 1 

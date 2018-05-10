@@ -19,7 +19,7 @@ class CLoadMapTask:public CTask
 private:
 
     Neo_Packet::HEAD head;
-    Neo_Packet::LOADMAP_PACKAGE_POP recv_packet;
+    Neo_Packet::MAPUPLOAD_PACKET_REQUEST recv_packet;
     CShareMem *shm_ack;
     int fd;
 public:

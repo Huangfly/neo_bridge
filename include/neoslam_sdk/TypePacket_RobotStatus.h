@@ -8,7 +8,7 @@
 namespace Neo_Packet{
     typedef struct {
         char isAck;
-    }STATUS_PACKAGE_POP;
+    }ROBOTSTATUS_PACKET_REQUEST;
 
     typedef struct {
         float x;
@@ -18,7 +18,7 @@ namespace Neo_Packet{
         char updateMap;
         char movebase_status;
         char ref[2];
-    }STATUS_PACKAGE_ACK;
+    }ROBOTSTATUS_PACKET_RESPONSE;
 }
 
 #endif //NEO_BRIDGE_TYPE_ROBOTSTATUS_HPP

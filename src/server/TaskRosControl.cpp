@@ -25,8 +25,8 @@ CRosControlTask::~CRosControlTask()
 
 void CRosControlTask::doAction() {
     CPacketStream packet;
-    Neo_Packet::NODECTL_PACKAGE_ACK ack = {0};
-    char ack_buf[60] = {0};
+    Neo_Packet::ROSCONTROL_PACKET_RESPONSE response = {0};
+    char response_buf[60] = {0};
     int Size = 0;
     string str;
 
@@ -35,17 +35,17 @@ void CRosControlTask::doAction() {
     NeoDebug("action node :%s %d\n",pop.node_name,pop.enable);
     if(CRosNodeManager::funcCtlNode(str,pop.enable) == false)
     {
-        sprintf(ack.ack,"fail.");
+        sprintf(response.ack,"fail.");
         printf("node fail.\n");
     }
     else
     {
-        sprintf(ack.ack,"ok.");
+        sprintf(response.ack,"ok.");
         printf("node ok.\n");
     }
 
 
-    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &ack, sizeof(ack), head.ref, head.device_id);
+    packet.Packet((unsigned char *)response_buf, &Size, this->head.function_id, &response, sizeof(response), head.ref, head.device_id);
 
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    shm_ack->Write((char*)response_buf, Size, fd);
 }

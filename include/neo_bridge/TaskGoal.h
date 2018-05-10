@@ -18,7 +18,7 @@ class CGoalTask:public CTask
 private:
 
     Neo_Packet::HEAD head;
-    Neo_Packet::GOAL_PACKAGE_POP ack_pack;
+    Neo_Packet::SENDGOAL_PACKET_REQUEST ack_pack;
     int fd;
     CShareMem *shm_ack;
 public:

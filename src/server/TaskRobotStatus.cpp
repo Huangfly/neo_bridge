@@ -21,11 +21,11 @@ CRobotStatusTask::~CRobotStatusTask()
 
 void CRobotStatusTask::doAction() {
     CPacketStream packet;
-    char ack_buf[60] = {0};
+    char response_buf[60] = {0};
     int Size = 0;
     if(recv_data.isAck == 0){ return; }
     //NeoDebug("-------robotstatus\n");
-    packet.Packet((unsigned char *)ack_buf, &Size, this->head.function_id, &CRosNode::robot_status, sizeof(Neo_Packet::STATUS_PACKAGE_ACK), head.ref, head.device_id);
-    shm_ack->Write((char*)ack_buf, Size, fd);
+    packet.Packet((unsigned char *)response_buf, &Size, this->head.function_id, &CRosNode::robot_status, sizeof(Neo_Packet::ROBOTSTATUS_PACKET_RESPONSE), head.ref, head.device_id);
+    shm_ack->Write((char*)response_buf, Size, fd);
 }
 
