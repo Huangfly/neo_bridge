@@ -66,7 +66,6 @@ inputLineToFile "echo \"mapping bash.\"" $map_file_name
 # create mapping_kill.sh
 inputLineToFile "#!/bin/bash" $mapkill_file_name
 inputLineToFile "echo \"mapping kill bash.\"" $mapkill_file_name
-inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_sim mapping_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $mapkill_file_name
 
 # create navigation.sh
 inputLineToFile "#!/bin/bash" $navigation_file_name
@@ -75,24 +74,29 @@ inputLineToFile "echo \"navigation bash.\"" $navigation_file_name
 # create navigation_kill.sh
 inputLineToFile "#!/bin/bash" $navigationkill_file_name
 inputLineToFile "echo \"navigation kill bash.\"" $navigationkill_file_name
-inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_sim navigation_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $navigationkill_file_name
 
 
 if [ $# -eq 1 ] && [ $1 == neo ]
 then
   echo "----create sim neo"
+  inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_sim mapping_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $mapkill_file_name
+  inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_sim navigation_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $navigationkill_file_name
   inputLineToFile "roslaunch micvision_sim mapping_neo.launch > $log_dir/mapping.log" $map_file_name
   inputLineToFile "roslaunch micvision_sim navigation_neo.launch map_filename:=$maps_dir/navigation.yaml > $log_dir/navigation.log" $navigation_file_name
 elif [ $# -eq 1 ] && [ $1 == turtlebot2 ]
 then
   echo "----create turtlebot2"
-  inputLineToFile "roslaunch micvision_sim mapping_turtlebot2.launch > $log_dir/mapping.log" $map_file_name
-  inputLineToFile "roslaunch micvision_sim navigation_turtlebot2.launch map_filename:=$maps_dir/navigation.yaml > $log_dir/navigation.log" $navigation_file_name
+  inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_mapping mapping_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $mapkill_file_name
+  inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_navigation navigation_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $navigationkill_file_name
+  inputLineToFile "roslaunch micvision_mapping mapping_turtlebot2.launch > $log_dir/mapping.log" $map_file_name
+  inputLineToFile "roslaunch micvision_navigation navigation_turtlebot2.launch map_filename:=$maps_dir/navigation.yaml > $log_dir/navigation.log" $navigation_file_name
 elif [ $# -eq 1 ] && [ $1 == turtlebot3 ]
 then
   echo "----create turtlebot2"
-  inputLineToFile "roslaunch micvision_sim mapping_turtlebot3.launch > $log_dir/mapping.log" $map_file_name
-  inputLineToFile "roslaunch micvision_sim navigation_turtlebot3.launch map_filename:=$maps_dir/navigation.yaml > $log_dir/navigation.log" $navigation_file_name
+  inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_mapping mapping_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $mapkill_file_name
+  inputLineToFile "kill -2 \$(ps -ef | grep \"roslaunch micvision_navigation navigation_\"|grep \"/usr/bin/python\"|awk '{print \$2}')" $navigationkill_file_name
+  inputLineToFile "roslaunch micvision_mapping mapping_turtlebot3.launch > $log_dir/mapping.log" $map_file_name
+  inputLineToFile "roslaunch micvision_navigation navigation_turtlebot3.launch map_filename:=$maps_dir/navigation.yaml > $log_dir/navigation.log" $navigation_file_name
 else
   echo "----remove all bash file"
   sudo rm -rf 	$map_file_name\
