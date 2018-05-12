@@ -15,13 +15,10 @@
 
 #define SHMBUS_KEY 1110 
 #define SHMACK_KEY 1111 
-#define SHMSTA_KEY 1112
 
 
 #define SEMBUS_KEY 2220
 #define SEMACK_KEY 2222
-#define SEMSTA_KEY 2222
-#define SEMLOG_KEY 3333
 //////////
 //
 void PreProcess(int argc, char *argv[]);//
