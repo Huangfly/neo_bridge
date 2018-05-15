@@ -35,7 +35,6 @@ namespace Neo_Packet {
         SENDGOAL,
         CANCELGOAL,
         ROSCONTROL,
-        LOCALIZATION,
         CMDVEL,
         LIDARDATAS,
         MAPUPLOAD,
