@@ -5,28 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define HEAD_CHR 0x04
-//#define END_CHR  0x05
-//#define H_E_LEN 2
-
-#define HEADER_CHR ((char)0xAA)
-#define ENDER_CHR  ((char)0xAB)
-#define HEADER_LEN 1
-
-#define PACK_HEARD		0
-#define PACK_LOGIN		1
-#define PACK_MAP        2
-#define PACK_GOAL		3
-#define PACK_CANCELGOAL 4
-#define PACK_NODECTL	5
-#define PACK_NAVIGATION	6
-#define PACK_LOCATION	7
-#define PACK_CMDVEL     8
-#define PACK_LIDAR		9
-#define PACK_LOADMAP    10
-#define PACK_GLOBALPATH	11
-
-
 namespace Neo_Packet {
 
     enum PacketType {
