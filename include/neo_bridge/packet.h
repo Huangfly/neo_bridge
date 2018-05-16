@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+#define HEADER_CHR ((char)0xAA)
+#define ENDER_CHR  ((char)0xAB)
+#define HEADER_LEN 1
+
 namespace Neo_Packet {
 
     enum PacketType {
