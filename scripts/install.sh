@@ -53,7 +53,10 @@ sudo touch      $map_file_name\
 		$navigation_file_name \
 		$navigationkill_file_name
 
-sudo chmod 777  $map_file_name \
+sudo chmod 777  $bash_dir \
+		$log_dir \
+		$maps_dir \
+		$map_file_name \
 		$mapkill_file_name \
 		$navigation_file_name \
 		$navigationkill_file_name
