@@ -7,6 +7,7 @@ function inputLineToFile {
     echo $1 >> $2
   else
     echo "no paramer"
+    exit 0
   fi
 }
 
